@@ -1,180 +1,205 @@
-{% extends "admin/base_site.html" %}
+{% extends "admin/base.html" %}
 {% load i18n static %}
 
-{% block bodyclass %}{{ block.super }} dashboard-grid{% endblock %}
+{% block content_title %}{% endblock %}
 
 {% block content %}
-<style>
-    .dashboard-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 25px;
-        padding: 20px 0;
-    }
+<div class="space-y-8 animate-in fade-in duration-500">
+  
+  <!-- Content Header -->
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight text-white mb-2">Trinetra Command Overview</h1>
+      <p class="text-slate-400 text-sm">Real-time system operations & access logs monitoring.</p>
+    </div>
+    <div class="flex space-x-3">
+      <button class="bg-slate-800 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-slate-700 transition-all border border-slate-700">
+        <i data-lucide="calendar" class="w-4 h-4 mr-2"></i> Last 30 Days
+      </button>
+      <button class="bg-gradient-to-r from-neonBlue to-blue-500 text-slate-950 px-4 py-2 rounded-lg font-semibold text-sm flex items-center hover:opacity-90 transition-all shadow-[0_0_15px_rgba(0,198,255,0.3)]">
+        <i data-lucide="download" class="w-4 h-4 mr-2"></i> Export Audit
+      </button>
+    </div>
+  </div>
 
-    .app-card {
-        background: rgba(10, 15, 20, 0.6);
-        border: 1px solid var(--glass-border);
-        border-radius: 4px;
-        overflow: hidden;
-        transition: 0.3s;
-        position: relative;
-    }
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+    
+    <!-- Stat 1 -->
+    <div class="bg-glassBg border border-slate-800/60 rounded-xl p-5 backdrop-blur-md relative overflow-hidden group hover:border-slate-700 transition-all duration-300">
+      <div class="absolute inset-0 bg-gradient-to-br from-neonBlue/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      <div class="relative z-10">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">Total Users</p>
+            <h3 class="text-3xl font-bold text-white mt-1">1,248</h3>
+          </div>
+          <div class="p-2.5 bg-slate-800/80 border border-slate-700 rounded-lg text-neonBlue group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(0,198,255,0.15)]">
+            <i data-lucide="users" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="flex items-center text-xs text-neonGreen font-medium">
+          <i data-lucide="trending-up" class="w-3.5 h-3.5 mr-1.5 border border-neonGreen/30 bg-neonGreen/10 rounded-full p-0.5"></i>
+          <span>12% verified this week</span>
+        </div>
+      </div>
+    </div>
 
-    .app-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 0 20px rgba(0, 243, 255, 0.15);
-        border-color: var(--neon-blue);
-    }
+    <!-- Stat 2 -->
+    <div class="bg-glassBg border border-slate-800/60 rounded-xl p-5 backdrop-blur-md relative overflow-hidden group hover:border-slate-700 transition-all duration-300">
+      <div class="absolute inset-0 bg-gradient-to-br from-neonPurple/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      <div class="relative z-10">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">Active Devices</p>
+            <h3 class="text-3xl font-bold text-white mt-1">42</h3>
+          </div>
+          <div class="p-2.5 bg-slate-800/80 border border-slate-700 rounded-lg text-neonPurple group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(127,90,240,0.15)]">
+            <i data-lucide="laptop" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="flex items-center text-xs text-neonGreen font-medium">
+          <span class="flex items-center justify-center w-4 h-4 rounded-full bg-neonGreen/20 text-neonGreen mr-1.5 shadow-[0_0_8px_rgba(44,182,125,0.4)]">
+            <span class="w-1.5 h-1.5 bg-neonGreen rounded-full"></span>
+          </span>
+          <span>All nodes operational</span>
+        </div>
+      </div>
+    </div>
 
-    .app-header {
-        background: rgba(0, 243, 255, 0.05);
-        padding: 15px 20px;
-        border-bottom: 1px solid var(--glass-border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+    <!-- Stat 3 -->
+    <div class="bg-glassBg border border-slate-800/60 rounded-xl p-5 backdrop-blur-md relative overflow-hidden group hover:border-slate-700 transition-all duration-300">
+      <div class="absolute inset-0 bg-gradient-to-br from-neonGreen/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      <div class="relative z-10">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">Logs Today</p>
+            <h3 class="text-3xl font-bold text-white mt-1">8,391</h3>
+          </div>
+          <div class="p-2.5 bg-slate-800/80 border border-slate-700 rounded-lg text-neonGreen group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(44,182,125,0.15)]">
+            <i data-lucide="database" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="flex items-center text-xs text-neonBlue font-medium">
+          <i data-lucide="activity" class="w-3.5 h-3.5 mr-1.5 border border-neonBlue/30 bg-neonBlue/10 rounded-full p-0.5"></i>
+          <span>Telemetry nominal</span>
+        </div>
+      </div>
+    </div>
 
-    .app-name {
-        font-family: var(--font-hud);
-        color: var(--neon-blue);
-        font-size: 16px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        text-decoration: none;
-    }
+    <!-- Stat 4 -->
+    <div class="bg-glassBg border border-slate-800/60 rounded-xl p-5 backdrop-blur-md relative overflow-hidden group hover:border-neonRed/40 transition-all duration-300">
+      <div class="absolute inset-0 bg-gradient-to-br from-neonRed/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      <div class="relative z-10">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">Security Alerts</p>
+            <h3 class="text-3xl font-bold text-white mt-1">3</h3>
+          </div>
+          <div class="p-2.5 bg-red-950/40 border border-neonRed/30 rounded-lg text-neonRed group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(239,69,101,0.2)]">
+            <i data-lucide="shield-alert" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="flex items-center text-xs text-neonRed font-medium">
+          <i data-lucide="alert-triangle" class="w-3.5 h-3.5 mr-1.5"></i>
+          <span>Action required immediately</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    .app-name:hover {
-        text-decoration: none;
-        text-shadow: 0 0 8px var(--neon-blue);
-    }
+  <!-- Divider -->
+  <div class="py-2">
+    <div class="h-px w-full bg-gradient-to-r from-transparent via-slate-800 to-transparent"></div>
+  </div>
 
-    .model-list {
-        padding: 0;
-        margin: 0;
-        list-style: none;
-    }
+  <div class="flex items-center justify-between mb-2">
+    <h2 class="text-xl font-bold text-white tracking-wide">System Management Layers</h2>
+    <div class="text-xs text-slate-500 hidden sm:block">Select a module to view or configure its assets</div>
+  </div>
+  
+  {% if app_list %}
+  <!-- Feature Cards Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+    {% for app in app_list %}
+    <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden group hover:-translate-y-1 hover:shadow-2xl hover:shadow-neonBlue/10 hover:border-slate-700 transition-all duration-300 flex flex-col h-full">
+      
+      <!-- Card Header -->
+      <div class="px-5 py-4 bg-slate-800/40 border-b border-slate-800 flex items-center justify-between">
+        <a href="{{ app.app_url }}" class="text-base font-semibold text-slate-100 group-hover:text-neonBlue transition-colors flex items-center uppercase tracking-wide">
+          {% if app.name == 'Audit Logs' %}
+            <i data-lucide="activity" class="w-4 h-4 mr-2.5 text-slate-400 group-hover:text-neonBlue"></i>
+          {% elif app.name == 'Authentication and Authorization' %}
+            <i data-lucide="users" class="w-4 h-4 mr-2.5 text-slate-400 group-hover:text-neonBlue"></i>
+          {% elif app.name == 'Officer Portal' %}
+            <i data-lucide="shield" class="w-4 h-4 mr-2.5 text-slate-400 group-hover:text-neonBlue"></i>
+          {% elif app.name == 'Access Control' %}
+            <i data-lucide="key" class="w-4 h-4 mr-2.5 text-slate-400 group-hover:text-neonBlue"></i>
+          {% else %}
+            <i data-lucide="box" class="w-4 h-4 mr-2.5 text-slate-400 group-hover:text-neonBlue"></i>
+          {% endif %}
+          {{ app.name }}
+        </a>
+      </div>
 
-    .model-item {
-        border-bottom: 1px solid #1a1a1a;
-        transition: 0.2s;
-    }
+      <!-- Models List (Fills height) -->
+      <div class="flex-1 flex flex-col p-2 space-y-1">
+        {% for model in app.models %}
+        <div class="flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-slate-800/50 transition-colors group/row">
+          
+          {% if model.admin_url %}
+            <a href="{{ model.admin_url }}" class="text-sm font-medium text-slate-300 group-hover/row:text-white flex items-center transition-colors">
+              <span class="w-2 h-2 rounded-full bg-slate-700 mr-3 group-hover/row:bg-neonBlue transition-colors duration-300"></span>
+              {{ model.name }}
+            </a>
+          {% else %}
+            <span class="text-sm text-slate-500 flex items-center">
+              <span class="w-2 h-2 rounded-full bg-slate-800 mr-3"></span>
+              {{ model.name }}
+            </span>
+          {% endif %}
 
-    .model-item:last-child {
-        border-bottom: none;
-    }
-
-    .model-item:hover {
-        background: rgba(255, 255, 255, 0.03);
-    }
-
-    .model-link-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 20px;
-    }
-
-    .model-name {
-        font-family: var(--font-ui);
-        color: var(--text-main);
-        font-size: 15px;
-        text-decoration: none;
-        flex-grow: 1;
-    }
-
-    .model-name:hover {
-        color: white;
-    }
-
-    .action-links {
-        display: flex;
-        gap: 15px;
-    }
-
-    .action-link {
-        font-family: var(--font-code);
-        font-size: 11px;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        text-decoration: none;
-        padding: 4px 8px;
-        border: 1px solid #333;
-        border-radius: 2px;
-        transition: 0.2s;
-    }
-
-    .action-link.add {
-        color: var(--neon-blue);
-        border-color: rgba(0, 243, 255, 0.3);
-    }
-
-    .action-link.change {
-        color: #aaa;
-    }
-
-    .action-link:hover {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: white;
-        color: white;
-    }
-
-    /* Remove default excessive padding */
-    .dashboard #content {
-        padding: 20px 40px;
-    }
-
-    /* Hide sidebar if present */
-    #content-related {
-        display: none;
-    }
-
-    .colM {
-        margin: 0 !important;
-    }
-</style>
-
-<div id="content-main">
-    {% if app_list %}
-    <div class="dashboard-container">
-        {% for app in app_list %}
-        <div class="app-card">
-            <div class="app-header">
-                <a href="{{ app.app_url }}" class="app-name"
-                    title="{% blocktrans with name=app.name %}Models in the {{ name }} application{% endblocktrans %}">
-                    {{ app.name }}
-                </a>
+          <div class="flex items-center space-x-1.5 opacity-0 group-hover/row:opacity-100 transition-opacity">
+            {% if model.add_url %}
+            <div class="relative group/tooltip">
+              <a href="{{ model.add_url }}" class="flex items-center justify-center w-7 h-7 rounded-md bg-neonGreen/10 text-neonGreen hover:bg-neonGreen hover:text-slate-900 transition-colors tooltip">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+              </a>
             </div>
-            <ul class="model-list">
-                {% for model in app.models %}
-                <li class="model-item">
-                    <div class="model-link-row">
-                        {% if model.admin_url %}
-                        <a href="{{ model.admin_url }}" class="model-name">{{ model.name }}</a>
-                        {% else %}
-                        <span class="model-name">{{ model.name }}</span>
-                        {% endif %}
-
-                        <div class="action-links">
-                            {% if model.add_url %}
-                            <a href="{{ model.add_url }}" class="action-link add">{% trans 'Add' %}</a>
-                            {% endif %}
-                            {% if model.admin_url %}
-                            <a href="{{ model.admin_url }}" class="action-link change">{% trans 'Change' %}</a>
-                            {% endif %}
-                        </div>
-                    </div>
-                </li>
-                {% endfor %}
-            </ul>
+            {% endif %}
+            
+            {% if model.admin_url %}
+            <div class="relative group/tooltip">
+              <a href="{{ model.admin_url }}" class="flex items-center justify-center w-7 h-7 rounded-md bg-neonBlue/10 text-neonBlue hover:bg-neonBlue hover:text-slate-900 transition-colors">
+                <i data-lucide="edit-3" class="w-4 h-4"></i>
+              </a>
+            </div>
+            {% endif %}
+          </div>
         </div>
         {% endfor %}
+      </div>
+      
     </div>
-    {% else %}
-    <p>{% trans "You don't have permission to view or edit anything." %}</p>
-    {% endif %}
-</div>
-{% endblock %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <!-- Empty State -->
+  <div class="flex flex-col items-center justify-center py-20 border border-slate-800 border-dashed rounded-2xl bg-slate-900/30">
+    <div class="w-16 h-16 rounded-full bg-slate-800/80 border border-slate-700 flex items-center justify-center mb-6 shadow-inner">
+      <i data-lucide="shield-alert" class="w-8 h-8 text-slate-500"></i>
+    </div>
+    <h3 class="text-xl font-semibold text-white mb-2">Access Denied</h3>
+    <p class="text-slate-400 max-w-sm text-center text-sm">You don't have permission to view or edit anything. Contact the system administrator for necessary clearances.</p>
+  </div>
+  {% endif %}
 
-{% block sidebar %}{% endblock %}
+</div>
+
+<!-- Auto-re-initialize Lucide Icons when dynamic DOM changes happen (if any) -->
+<script>
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
+</script>
+{% endblock %}
