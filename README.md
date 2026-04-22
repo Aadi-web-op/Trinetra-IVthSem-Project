@@ -1,180 +1,94 @@
-# 🚀 Trinetra – Sovereign Zero-Trust Cyber Defense Platform
+# TRINETRA: Advanced AI Surveillance & Legal System v3.0
 
-> *“The Third Eye of Cyber Intelligence for Law Enforcement”*
+> **"Eyes of the Law, Mind of a Machine."**
 
----
-
-## 📌 Overview
-
-**Trinetra** is a next-generation **AI-powered cyber defense and forensic platform** designed to empower law enforcement agencies with real-time intelligence, automated legal workflows, and sovereign data security.
-
-It transforms cyber policing from **reactive investigation → proactive intelligence-driven defense**, ensuring faster response, higher recovery rates, and legally compliant digital evidence handling.
+Trinetra is a cutting-edge **Intelligence Officer Portal** designed for high-security clearance operations. It integrates **Generative AI** for log analysis and legal drafting with a futuristic **Cyberpunk/Glassmorphism UI**.
 
 ---
 
-## 🎯 Problem Statement
+## 🚀 Key Features
 
-India faces:
-- ⚡ High attack frequency (~2000+ attacks/week per organization)
-- 💸 Massive cyber fraud losses (₹36,450 Cr in Q1 2025)
-- ⏳ Delayed response due to manual legal processes
-- 🧠 Skill gap in cyber forensics at ground level
-- 🔒 Dependence on foreign forensic tools
+### 1. 🧠 Intelligence Lab (AI Node)
+- **Universal File Analyzer**: Upload logs, code, or documents for instant AI analysis.
+- **Legal Auto-Drafter**: Generates professional PDF legal opinions based on case facts.
+- **Hybrid Engine**: Connects to **Hugging Face Spaces** for heavy lifting, with local fallbacks.
 
-Trinetra bridges these gaps with **AI + Zero Trust + Automation**.
+### 2. 🛡️ Advanced Security
+- **Iron Dome Upgrade**: Certificate-based binding and IP-locking middleware (Configurable).
+- **Biometric Logic**: Ready for WebAuthn (Fingerprint/FaceID) integration.
+- **Role-Based Access**: Strict separation between Commanders (Admins) and Field Officers.
 
----
-
-## 💡 Key Features
-
-### 🔐 Zero-Trust Security Architecture
-- Mutual TLS (mTLS) authentication  
-- IP whitelisting & device binding  
-- Biometric login (WebAuthn / FIDO2)
-
-### 🧠 AI-Powered Intelligence Engine
-- Private LLMs (Llama 3 / Qwen)
-- Malware analysis & threat detection
-- AI-generated investigation insights
-
-### ⚖️ Automated Legal Desk
-- Auto-generate notices (BNSS, BSA compliant)
-- SHA-256 hashing for evidence integrity
-- Court-ready digital documentation
-
-### 🧪 Red Team Lab
-- Malware sandbox environment  
-- AI-assisted forensic scripting  
-- Threat behavior analysis
-
-### 📊 Real-Time Monitoring Dashboard
-- Case tracking & alerts  
-- Incident severity classification  
-- Investigation workflow management  
-
-### 🛡️ Immutable Evidence Storage
-- WORM (Write Once Read Many)
-- Secure audit logs
-- Tamper-proof digital evidence
+### 3. 💻 Future-Ready UI
+- **Glassmorphism**: Translucent panels, neon accents, and blurs.
+- **Reactive Dashboard**: Real-time threat levels and case tracking.
+- **Responsive**: Fully functional on tactical tablets and desktop command centers.
 
 ---
 
-## 🏗️ System Architecture
+## 🛠️ Technology Stack
 
-### 🔵 3-Layer “Iron Dome” Model
-
-1. **Gate (Access Control)**
-   - Identity verification
-   - Secure entry via mTLS + biometrics
-
-2. **Brain (AI Engine)**
-   - Air-gapped AI models
-   - Private VNET-based inference
-
-3. **Shield (Data Integrity)**
-   - Immutable storage
-   - Cryptographic hashing (SHA-256)
+| Component | Technology | Description |
+| :--- | :--- | :--- |
+| **Backend** | Python 3.11 + Django 5.0 | Core logic and ORM |
+| **Database** | PostgreSQL (Neon DB) | Cloud-native serverless SQL |
+| **AI Engine** | Gradio Client + Hugging Face | Interface for LLM operations |
+| **Frontend** | HTML5 + Tailwind + Vanilla JS | Lightweight, high-performance UI |
+| **Deployment**| Azure App Service | Enterprise-grade hosting |
 
 ---
 
-## ⚙️ Tech Stack
+## ⚙️ Setup & Installation
 
-| Component              | Technology Used |
-|----------------------|----------------|
-| Backend              | Django 5.0 (Python) |
-| AI Models            | Llama 3, Qwen (Ollama) |
-| Cloud Infrastructure | Microsoft Azure (VNET) |
-| Authentication       | WebAuthn / FIDO2 |
-| Database             | PostgreSQL |
-| Storage              | Azure Immutable Blob |
-| Security             | SHA-256 Hashing |
+### Prerequisites
+- Python 3.11+
+- Git
 
----
+### 1. Local Development
+```bash
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/TRINETRA_REPO.git
+cd Trinetra_Root
 
-## 🔥 Innovation Highlights
+# Install Dependencies
+pip install -r requirements.txt
 
-- 🧠 Air-Gapped AI → No data leakage, full sovereignty  
-- ⚙️ AI Log Architect → Self-healing system  
-- 🎯 Trap Login System → Converts attackers into intelligence  
-- 📐 Mathematical Evidence Certainty → Court-proof hashing  
+# Create .env file (See deployment_guide.md for keys)
+# Run Migrations
+python manage.py migrate
 
----
+# Create Superuser (Admin)
+python manage.py createsuperuser
 
-## 📈 Use Cases
+# Start Server
+python manage.py runserver
+```
 
-### 🕵️ Digital Arrest Scam Detection
-- Trace VoIP calls
-- Freeze accounts instantly
+### 2. Azure Deployment
+This project is **Cloud-Ready**.
+- **Startup Script**: `startup.sh` includes migration and user creation.
+- **Database**: Configured for `DATABASE_URL` (Postgres).
+- **Static Files**: Served via `WhiteNoise`.
 
-### 💻 Ransomware Response
-- Identify ransomware variant
-- Generate recovery scripts
-
-### ⚖️ Court Evidence Validation
-- Tamper-proof logs
-- Hash-based verification
-
-### ⚡ Real-Time Incident Response
-- Automated alerts & actions
-- Faster “Golden Hour” recovery
+👉 **[Read the Deployment Guide](deployment_guide.md)** for full Azure commands.
 
 ---
 
-## 🚧 Challenges
+## 🔐 Security Protocols (Config)
 
-- High GPU costs for private AI deployment  
-- Legal alignment (IT Act vs new BNS/BNSS laws)  
-- Training required for law enforcement & judiciary  
+The system runs in **Prototyping Mode** by default for ease of testing.
 
----
-
-## 🛣️ Roadmap
-
-| Phase | Focus |
-|------|------|
-| Phase 1 | Core infrastructure & legal automation |
-| Phase 2 | AI intelligence integration |
-| Phase 3 | Security hardening & evidence system |
-| Phase 4 | Nationwide integration (ICJS) |
+- **Enable Iron Dome**: Set `TRINETRA_STRICT_FIREWALL = True` in `config/settings.py`.
+- **IP Allowlist**: Configure `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` in production.
 
 ---
 
-## 👥 Team – HackTrinity
-
-- **Vansh Verma**   
-- **Aaradhya Rawat**  
-- **Tanya Makhija** 
-
----
-
-## 🌍 Vision
-
-To build **India’s first sovereign cyber defense ecosystem**, ensuring:
-
-- 🔒 Data sovereignty  
-- ⚡ Real-time justice delivery  
-- 🤖 AI-assisted investigations  
-- 🏛️ Legally compliant digital forensics  
+## 🤝 Contribution
+1. Fork the repository.
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
 
 ---
-
-## 📌 Conclusion
-
-**Trinetra is not just a tool — it's a paradigm shift.**
-
-It enables:
-> ⚡ Faster investigations  
-> 🔍 Smarter intelligence  
-> 🛡️ Stronger cybersecurity  
-> ⚖️ Trustworthy justice system  
-
----
-
-## ⭐ Support
-
-If you like this project:
-- ⭐ Star the repository  
-- 🍴 Fork it  
-- 🤝 Contribute  
-
----
+**Verified By:** Trinetra Command Command
+**Clearance Level:** TOP SECRET // NOFORN
