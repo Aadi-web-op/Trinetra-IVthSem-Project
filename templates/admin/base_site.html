@@ -1,0 +1,283 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}Trinetra Command Center{% endblock %}
+
+{% block extrastyle %}
+<link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;700&family=Share+Tech+Mono&display=swap"
+    rel="stylesheet">
+<style>
+    :root {
+        --bg-deep: #020204;
+        --neon-blue: #00f3ff;
+        --neon-red: #ff003c;
+        --glass-bg: rgba(10, 15, 20, 0.95);
+        --glass-border: rgba(0, 243, 255, 0.3);
+        --text-main: #f0f6fc;
+        --text-muted: #6e8496;
+        --font-ui: 'Rajdhani', sans-serif;
+        --font-hud: 'Orbitron', sans-serif;
+        --font-code: 'Share Tech Mono', monospace;
+        --primary: var(--neon-blue);
+        /* Override Django Variables */
+        --secondary: var(--bg-deep);
+        --accent: var(--neon-red);
+        --primary-fg: #000;
+        --body-fg: var(--text-main);
+        --body-bg: var(--bg-deep);
+        --darkened-bg: #000;
+        --selected-bg: rgba(0, 243, 255, 0.2);
+        --selected-row: rgba(0, 243, 255, 0.1);
+    }
+
+    /* Hide Default Django Theme Toggle */
+    .theme-toggle {
+        display: none !important;
+    }
+
+    /* Global Overrides */
+    body {
+        background-color: var(--bg-deep) !important;
+        color: var(--text-main) !important;
+        font-family: var(--font-ui) !important;
+        background-image:
+            linear-gradient(rgba(0, 20, 40, 0.9), rgba(5, 5, 5, 0.98)),
+            repeating-linear-gradient(0deg, transparent 0, transparent 40px, rgba(0, 243, 255, 0.02) 41px),
+            repeating-linear-gradient(90deg, transparent 0, transparent 40px, rgba(0, 243, 255, 0.02) 41px) !important;
+        margin-bottom: 60px;
+        /* Space for footer */
+    }
+
+    /* Header */
+    #header {
+        background: rgba(5, 10, 15, 0.9) !important;
+        border-bottom: 1px solid var(--neon-blue) !important;
+        color: var(--text-main) !important;
+    }
+
+    #branding h1,
+    #branding h1 a {
+        font-family: var(--font-hud) !important;
+        color: var(--neon-blue) !important;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+    }
+
+    /* Links */
+    a:link,
+    a:visited {
+        color: var(--neon-blue) !important;
+    }
+
+    a:hover {
+        color: #fff !important;
+        text-shadow: 0 0 5px var(--neon-blue);
+    }
+
+    /* Modules / Cards */
+    .module,
+    .card,
+    .login-box {
+        background: var(--glass-bg) !important;
+        border: 1px solid var(--glass-border) !important;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5) !important;
+        backdrop-filter: blur(5px);
+        border-radius: 4px;
+    }
+
+    .module caption,
+    .module h2 {
+        background: rgba(0, 243, 255, 0.1) !important;
+        color: var(--neon-blue) !important;
+        font-family: var(--font-hud) !important;
+        letter-spacing: 1px;
+    }
+
+    /* Forms & Inputs */
+    input[type=text],
+    input[type=password],
+    input[type=email],
+    input[type=url],
+    input[type=number],
+    textarea,
+    select,
+    .vTextField {
+        background: rgba(0, 0, 0, 0.6) !important;
+        border: 1px solid #333 !important;
+        color: var(--text-main) !important;
+        font-family: var(--font-code) !important;
+        padding: 8px !important;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        border-color: var(--neon-blue) !important;
+        box-shadow: 0 0 10px rgba(0, 243, 255, 0.2) !important;
+    }
+
+    /* Buttons */
+    .button,
+    input[type=submit],
+    input[type=button],
+    .submit-row input {
+        background: var(--neon-blue) !important;
+        color: #000 !important;
+        border: none !important;
+        padding: 10px 20px !important;
+        font-family: var(--font-hud) !important;
+        text-transform: uppercase;
+        font-weight: bold !important;
+        transition: 0.3s;
+        cursor: pointer;
+    }
+
+    .button:hover,
+    input[type=submit]:hover {
+        box-shadow: 0 0 15px var(--neon-blue) !important;
+        transform: scale(1.05);
+    }
+
+    .button.default,
+    input[type=submit].default {
+        background: var(--neon-blue) !important;
+    }
+
+    .button.deletelink {
+        background: var(--neon-red) !important;
+        color: white !important;
+    }
+
+    /* Tables */
+    #changelist table {
+        border: 1px solid var(--glass-border) !important;
+    }
+
+    #changelist table thead th {
+        background: rgba(0, 243, 255, 0.1) !important;
+        color: var(--neon-blue) !important;
+        border-bottom: 1px solid var(--glass-border) !important;
+    }
+
+    #changelist table tbody tr {
+        background: transparent !important;
+        border-bottom: 1px solid #222 !important;
+    }
+
+    #changelist table tbody tr:hover {
+        background: rgba(0, 243, 255, 0.05) !important;
+    }
+
+    /* Messages */
+    .messagelist li.success {
+        background: rgba(0, 243, 255, 0.1) !important;
+        color: var(--neon-blue) !important;
+        border: 1px solid var(--neon-blue) !important;
+    }
+
+    .messagelist li.warning,
+    .messagelist li.error {
+        background: rgba(255, 0, 60, 0.1) !important;
+        color: var(--neon-red) !important;
+        border: 1px solid var(--neon-red) !important;
+    }
+
+    /* Breadcrumbs */
+    .breadcrumbs {
+        background: transparent !important;
+        color: var(--text-muted) !important;
+        border-bottom: 1px solid #222;
+    }
+
+    /* Premium Footer */
+    .trinetra-footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(10, 15, 20, 0.95);
+        border-top: 1px solid var(--neon-blue);
+        backdrop-filter: blur(10px);
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 9999;
+        font-family: var(--font-code);
+        font-size: 11px;
+        color: var(--neon-blue);
+        box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+        box-sizing: border-box;
+    }
+
+    .tf-center {
+        color: var(--neon-red);
+        letter-spacing: 2px;
+        font-weight: bold;
+        animation: pulseText 2s infinite;
+        text-transform: uppercase;
+    }
+
+    .status-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background-color: #0aff0a;
+        /* Neon Green */
+        border-radius: 50%;
+        margin-left: 5px;
+        box-shadow: 0 0 10px #0aff0a;
+        animation: pulseDot 1.5s infinite;
+    }
+
+    @keyframes pulseText {
+        0% {
+            opacity: 0.7;
+        }
+
+        50% {
+            opacity: 1;
+            text-shadow: 0 0 5px var(--neon-red);
+        }
+
+        100% {
+            opacity: 0.7;
+        }
+    }
+
+    @keyframes pulseDot {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        50% {
+            transform: scale(1.2);
+            opacity: 0.8;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">TRINETRA COMMAND</a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block footer %}
+<footer class="trinetra-footer">
+    <div class="tf-left">TRINETRA SECURE SYSTEM // v2.0</div>
+    <div class="tf-center">RESTRICTED ACCESS - AUTHORIZED PERSONNEL ONLY</div>
+    <div class="tf-right">SYS STATUS: ONLINE <span class="status-dot"></span></div>
+</footer>
+{% endblock %}

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ACCESS DENIED | TRINETRA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000;
+            color: #ff0000;
+            font-family: 'Share Tech Mono', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle at center, rgba(50, 0, 0, 0.2) 0%, #000 70%),
+                repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(255, 0, 0, 0.05) 3px);
+        }
+
+        .lockdown-container {
+            border: 2px solid #ff0000;
+            padding: 50px;
+            text-align: center;
+            position: relative;
+            background: rgba(20, 0, 0, 0.8);
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            animation: pulse-border 2s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.2); }
+            50% { box-shadow: 0 0 50px rgba(255, 0, 0, 0.5); }
+            100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.2); }
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 64px;
+            margin: 0 0 20px 0;
+            text-shadow: 0 0 20px #ff0000;
+            letter-spacing: 5px;
+        }
+
+        .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: blink 1s infinite alternate;
+        }
+
+        @keyframes blink {
+            from { opacity: 1; }
+            to { opacity: 0.5; }
+        }
+
+        p {
+            font-size: 24px;
+            margin: 10px 0;
+            text-transform: uppercase;
+        }
+
+        .details {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #aa0000;
+            border-top: 1px solid #550000;
+            padding-top: 10px;
+        }
+
+        .btn-retry {
+            margin-top: 30px;
+            background: transparent;
+            border: 1px solid #ff0000;
+            color: #ff0000;
+            padding: 10px 30px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-retry:hover {
+            background: #ff0000;
+            color: black;
+            box-shadow: 0 0 20px #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="lockdown-container">
+        <div class="icon">⚠️</div>
+        <h1>ACCESS DENIED</h1>
+        <p>Security Clearance Insufficient</p>
+        <p>Biometric Signature Mismatch</p>
+        
+        <div class="details">
+            ERROR CODE: {{ reason|default:"UNAUTHORIZED_ENTRY_ATTEMPT" }}<br>
+            IP: {{ request.build_absolute_uri }} LOGGED<br>
+            Incident reported to Central Command.
+        </div>
+
+        <a href="{% url 'portal_login' %}" class="btn-retry">RETURN TO LOGIN</a>
+    </div>
+</body>
+</html>

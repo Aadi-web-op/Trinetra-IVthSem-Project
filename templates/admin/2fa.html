@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trinetra - 2FA Verification</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;700&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #020204;
+            --neon-blue: #00f3ff;
+            --neon-red: #ff003c;
+            --glass-bg: rgba(10, 15, 20, 0.85);
+            --glass-border: rgba(0, 243, 255, 0.2);
+            --text-main: #f0f6fc;
+            --font-ui: 'Rajdhani', sans-serif;
+            --font-hud: 'Orbitron', sans-serif;
+            --font-code: 'Share Tech Mono', monospace;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: var(--font-ui);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-image:
+                linear-gradient(rgba(0, 20, 40, 0.9), rgba(5, 5, 5, 0.95)),
+                repeating-linear-gradient(0deg, transparent 0, transparent 40px, rgba(0, 243, 255, 0.02) 41px),
+                repeating-linear-gradient(90deg, transparent 0, transparent 40px, rgba(0, 243, 255, 0.02) 41px);
+        }
+
+        .login-box {
+            background: rgba(10, 12, 16, 0.8);
+            border: 1px solid var(--neon-blue);
+            border-radius: 4px;
+            padding: 40px;
+            width: 400px;
+            position: relative;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Corners */
+        .corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-color: var(--neon-blue);
+            border-style: solid;
+            pointer-events: none;
+        }
+
+        .tl {
+            top: -1px;
+            left: -1px;
+            border-width: 2px 0 0 2px;
+        }
+
+        .tr {
+            top: -1px;
+            right: -1px;
+            border-width: 2px 2px 0 0;
+        }
+
+        .bl {
+            bottom: -1px;
+            left: -1px;
+            border-width: 0 0 2px 2px;
+        }
+
+        .br {
+            bottom: -1px;
+            right: -1px;
+            border-width: 0 2px 2px 0;
+        }
+
+        .box-title {
+            font-family: var(--font-hud);
+            font-size: 24px;
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+        }
+
+        .box-subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-main);
+            margin-bottom: 25px;
+            opacity: 0.8;
+        }
+
+        .form-row {
+            margin-bottom: 20px;
+        }
+
+        label {
+            color: var(--neon-blue);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            color: white;
+            font-family: var(--font-code);
+            transition: 0.3s;
+            outline: none;
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 18px;
+            letter-spacing: 5px;
+        }
+
+        input:focus {
+            border-color: var(--neon-blue);
+            background: rgba(0, 243, 255, 0.05);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
+        }
+
+        .submit-row {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            background: var(--neon-blue);
+            color: black;
+            border: none;
+            padding: 15px;
+            font-family: var(--font-hud);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 10px;
+        }
+
+        input[type="submit"]:hover {
+            box-shadow: 0 0 30px var(--neon-blue);
+            transform: scale(1.02);
+        }
+
+        .btn-bio {
+            width: 100%;
+            background: transparent;
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+            padding: 12px;
+            font-family: var(--font-ui);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 13px;
+        }
+
+        .btn-bio:hover {
+            background: rgba(0, 243, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+        }
+
+        .errornote {
+            color: var(--neon-red);
+            font-family: var(--font-code);
+            font-size: 12px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid var(--neon-red);
+            background: rgba(255, 0, 60, 0.1);
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-box">
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+
+        <div class="box-title">Two-Factor Auth</div>
+        <div class="box-subtitle">Use Authenticator App or Biometrics</div>
+
+        {% if error %}
+        <p class="errornote">
+            {{ error }}
+        </p>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-row">
+                <label for="id_otp">Enter 6-Digit Code</label>
+                <input type="text" name="otp" id="id_otp" autofocus autocomplete="off" placeholder="------"
+                    maxlength="6">
+            </div>
+
+            <input type="hidden" name="biometric_data" id="biometric_data">
+
+            <div class="submit-row">
+                <input type="submit" value="VERIFY CODE">
+            </div>
+        </form>
+
+        <div class="submit-row">
+            <button type="button" class="btn-bio" onclick="startBiometric()">
+                Use Biometric Scan
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function startBiometric() {
+            // Placeholder: In a real scenario, this would trigger WebAuthn
+            alert("Biometric Scanner Initiated... (Simulated)");
+            document.getElementById('biometric_data').value = "mock_bio_token_123";
+            document.querySelector('form').submit();
+        }
+    </script>
+</body>
+
+</html>

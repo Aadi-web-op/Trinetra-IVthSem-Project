@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trinetra Admin Command</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;700&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #020204;
+            --neon-blue: #00f3ff;
+            --neon-red: #ff003c;
+            /* Admin Specific */
+            --glass-bg: rgba(10, 15, 20, 0.85);
+            --glass-border: rgba(0, 243, 255, 0.2);
+            --text-main: #f0f6fc;
+            --font-ui: 'Rajdhani', sans-serif;
+            --font-hud: 'Orbitron', sans-serif;
+            --font-code: 'Share Tech Mono', monospace;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: var(--font-ui);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-image:
+                linear-gradient(rgba(0, 20, 40, 0.9), rgba(5, 5, 5, 0.95)),
+                repeating-linear-gradient(0deg, transparent 0, transparent 40px, rgba(0, 243, 255, 0.02) 41px),
+                repeating-linear-gradient(90deg, transparent 0, transparent 40px, rgba(0, 243, 255, 0.02) 41px);
+        }
+
+        .login-box {
+            background: rgba(10, 12, 16, 0.8);
+            border: 1px solid var(--neon-blue);
+            border-radius: 4px;
+            padding: 40px;
+            width: 400px;
+            position: relative;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Corners */
+        .corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-color: var(--neon-blue);
+            border-style: solid;
+            pointer-events: none;
+        }
+
+        .tl {
+            top: -1px;
+            left: -1px;
+            border-width: 2px 0 0 2px;
+        }
+
+        .tr {
+            top: -1px;
+            right: -1px;
+            border-width: 2px 2px 0 0;
+        }
+
+        .bl {
+            bottom: -1px;
+            left: -1px;
+            border-width: 0 0 2px 2px;
+        }
+
+        .br {
+            bottom: -1px;
+            right: -1px;
+            border-width: 0 2px 2px 0;
+        }
+
+        .box-title {
+            font-family: var(--font-hud);
+            font-size: 24px;
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+        }
+
+        .form-row {
+            margin-bottom: 20px;
+        }
+
+        label {
+            color: var(--neon-blue);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            color: white;
+            font-family: var(--font-code);
+            transition: 0.3s;
+            outline: none;
+            box-sizing: border-box;
+            /* Fix padding issue */
+        }
+
+        input:focus {
+            border-color: var(--neon-blue);
+            background: rgba(0, 243, 255, 0.05);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
+        }
+
+        .submit-row {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            background: var(--neon-blue);
+            color: black;
+            border: none;
+            padding: 15px;
+            font-family: var(--font-hud);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            box-shadow: 0 0 30px var(--neon-blue);
+            transform: scale(1.02);
+        }
+
+        .errornote {
+            color: var(--neon-red);
+            font-family: var(--font-code);
+            font-size: 12px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid var(--neon-red);
+            background: rgba(255, 0, 60, 0.1);
+        }
+
+        .errorlist {
+            list-style: none;
+            padding: 0;
+            margin: 5px 0 0 0;
+            color: var(--neon-red);
+            font-size: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-box">
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+
+        <div class="box-title">Admin Command</div>
+
+        {% if form.errors and not form.non_field_errors %}
+        <p class="errornote">
+            Please correct the errors below.
+        </p>
+        {% endif %}
+
+        {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+        <p class="errornote">
+            {{ error }}
+        </p>
+        {% endfor %}
+        {% endif %}
+
+        <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+            <div class="form-row">
+                <label for="id_username">Admin ID</label>
+                {{ form.username }}
+                {{ form.username.errors }}
+            </div>
+
+            <div class="form-row">
+                <label for="id_password">Secure Protocol</label>
+                {{ form.password }}
+                {{ form.password.errors }}
+                <input type="hidden" name="next" value="{{ next }}">
+            </div>
+
+            <div class="submit-row">
+                <input type="submit" value="Initiate Session">
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,733 @@
+{% extends 'officer_portal/base.html' %}
+
+{% block title %}Trinetra - Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-layout {
+        width: 100%;
+        max-width: 1200px;
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+        animation: fadeInUP 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes fadeInUP {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Status Cards */
+    .status-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+    }
+
+    .status-card {
+        padding: 30px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transition: var(--transition-bounce);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .status-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: radial-gradient(circle at top right, rgba(255,255,255,0.05), transparent);
+        opacity: 0;
+        transition: var(--transition-smooth);
+    }
+
+    .status-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        border-color: var(--glass-border-highlight);
+    }
+    
+    .status-card:hover::before { opacity: 1; }
+
+    .status-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .status-icon.green { background: rgba(0, 255, 136, 0.1); color: var(--neon-green); }
+    .status-icon.blue { background: rgba(0, 229, 255, 0.1); color: var(--neon-blue); }
+    .status-icon.red { background: rgba(255, 51, 102, 0.1); color: var(--neon-red); }
+    .status-icon.orange { background: rgba(255, 153, 0, 0.1); color: #ff9900; }
+
+    .status-icon svg { width: 28px; height: 28px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+    .status-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .status-label {
+        font-family: var(--font-code);
+        color: var(--text-muted);
+        font-size: 13px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+    }
+
+    .status-value {
+        font-size: 32px;
+        font-weight: 800;
+        color: white;
+        letter-spacing: -0.5px;
+    }
+
+    /* Threat classes */
+    .t-low { color: var(--neon-green); }
+    .t-med { color: #ff9900; }
+    .t-high { color: var(--neon-red); text-shadow: 0 0 15px rgba(255, 51, 102, 0.4); }
+
+    /* Section Headers */
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: white;
+        letter-spacing: 1px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .section-title svg {
+        width: 24px;
+        height: 24px;
+        stroke: var(--neon-blue);
+        fill: none;
+        stroke-width: 2;
+    }
+
+    /* Table Styles */
+    .data-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        text-align: left;
+    }
+
+    .data-table th {
+        padding: 16px 20px;
+        font-family: var(--font-code);
+        font-size: 12px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .data-table td {
+        padding: 20px;
+        font-family: var(--font-code);
+        font-size: 14px;
+        color: var(--text-main);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+        transition: var(--transition-smooth);
+    }
+
+    .data-table tbody tr {
+        transition: var(--transition-smooth);
+    }
+
+    .data-table tbody tr:hover td {
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Badges */
+    .badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        font-family: var(--font-ui);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .badge::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+    }
+
+    .badge.p-high { background: rgba(255, 51, 102, 0.1); color: var(--neon-red); }
+    .badge.p-high::before { background: var(--neon-red); box-shadow: 0 0 8px var(--neon-red); }
+
+    .badge.p-med { background: rgba(255, 153, 0, 0.1); color: #ff9900; }
+    .badge.p-med::before { background: #ff9900; box-shadow: 0 0 8px #ff9900; }
+
+    .badge.p-low { background: rgba(0, 255, 136, 0.1); color: var(--neon-green); }
+    .badge.p-low::before { background: var(--neon-green); box-shadow: 0 0 8px var(--neon-green); }
+
+    /* Action Links in Table */
+    .link-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-family: var(--font-ui);
+        font-size: 13px;
+        font-weight: 600;
+        padding: 8px 16px;
+        border-radius: 8px;
+        transition: var(--transition-bounce);
+        border: 1px solid transparent;
+        margin-left: 8px;
+    }
+
+    .link-action.blue:hover {
+        color: var(--neon-blue);
+        background: rgba(0, 229, 255, 0.1);
+        border-color: rgba(0, 229, 255, 0.2);
+    }
+    
+    .link-action.red:hover {
+        color: var(--neon-red);
+        background: rgba(255, 51, 102, 0.1);
+        border-color: rgba(255, 51, 102, 0.2);
+    }
+
+    .link-action svg {
+        width: 16px;
+        height: 16px;
+        stroke: currentColor;
+    }
+
+    .empty-state {
+        padding: 60px 40px;
+        text-align: center;
+        color: var(--text-muted);
+    }
+
+    .empty-state svg {
+        width: 48px;
+        height: 48px;
+        stroke: rgba(255, 255, 255, 0.1);
+        margin-bottom: 20px;
+    }
+
+    /* Full Page Loader */
+    #cyber-loader {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(3, 5, 9, 0.9);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        z-index: 9999;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .loader-rings {
+        position: relative;
+        width: 100px;
+        height: 100px;
+    }
+
+    .loader-ring {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        animation: spin-ring 2s linear infinite;
+    }
+
+    .loader-ring:nth-child(1) { border-top-color: var(--neon-blue); animation-duration: 1.5s; }
+    .loader-ring:nth-child(2) { border-right-color: var(--neon-purple); width: 80%; height: 80%; top: 10%; left: 10%; animation-direction: reverse; }
+    .loader-ring:nth-child(3) { border-bottom-color: var(--neon-green); width: 60%; height: 60%; top: 20%; left: 20%; animation-duration: 3s; }
+
+    @keyframes spin-ring { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    .loader-text {
+        margin-top: 30px;
+        font-family: var(--font-ui);
+        font-weight: 700;
+        font-size: 18px;
+        color: var(--text-main);
+        letter-spacing: 2px;
+        animation: pulse 1.5s infinite;
+    }
+    
+    .loader-sub {
+        font-family: var(--font-code);
+        color: var(--neon-blue);
+        font-size: 12px;
+        margin-top: 10px;
+        letter-spacing: 1px;
+    }
+
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+    /* Modals */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+        opacity: 1;
+    }
+
+    .modal-box {
+        width: 100%;
+        max-width: 540px;
+        transform: scale(0.95) translateY(20px);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .modal-overlay.active .modal-box {
+        transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 20px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .modal-header svg {
+        width: 24px;
+        height: 24px;
+        stroke: var(--neon-blue);
+        fill: none;
+        stroke-width: 2;
+    }
+
+    .modal-header h2 {
+        font-size: 20px;
+        color: white;
+        margin: 0;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        font-family: var(--font-ui);
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .form-group input, .form-group textarea, .form-group select {
+        width: 100%;
+        padding: 14px 16px;
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 8px;
+        color: white;
+        font-family: var(--font-code);
+        font-size: 14px;
+        outline: none;
+        transition: var(--transition-smooth);
+    }
+    
+    .form-group select option { background: #111; }
+
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+        border-color: var(--neon-blue);
+        background: rgba(0, 229, 255, 0.03);
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 32px;
+    }
+
+    .text-highlight { color: var(--neon-blue); font-weight: bold; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Loading Overlay -->
+<div id="cyber-loader">
+    <div class="loader-rings">
+        <div class="loader-ring"></div>
+        <div class="loader-ring"></div>
+        <div class="loader-ring"></div>
+    </div>
+    <div class="loader-text">SYNTHESIZING LEGAL OPINION</div>
+    <div class="loader-sub">Accessing Trinetra Neural Network...</div>
+</div>
+
+<div class="dashboard-layout">
+    
+    <!-- Row 1: Status Cards -->
+    <div class="status-row">
+        <div class="glass-panel status-card">
+            <div class="status-icon green">
+                <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            </div>
+            <div class="status-info">
+                <span class="status-label">System Status</span>
+                <span class="status-value" style="color:var(--neon-green);">ONLINE</span>
+            </div>
+        </div>
+        
+        <div class="glass-panel status-card">
+            <div class="status-icon blue">
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
+            <div class="status-info">
+                <span class="status-label">Active Cases</span>
+                <span class="status-value">{{ case_count }}</span>
+            </div>
+        </div>
+
+        <div class="glass-panel status-card">
+            <div class="status-icon {% if threat_class == 't-low' %}green{% elif threat_class == 't-med' %}orange{% else %}red{% endif %}">
+                <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            </div>
+            <div class="status-info">
+                <span class="status-label">Global Threat</span>
+                <span class="status-value {{ threat_class }}">{{ threat_level }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 2: Active Cases -->
+    <div>
+        <div class="section-header">
+            <div class="section-title">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                Active Investigations
+            </div>
+            <button onclick="openCreateCaseModal()" class="btn-primary">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                New Case Data
+            </button>
+        </div>
+
+        <div class="glass-panel">
+            <div class="data-table-wrapper">
+                {% if cases %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Case ID</th>
+                            <th>Target Entity</th>
+                            <th>Priority Protocol</th>
+                            <th>Status Phase</th>
+                            <th style="text-align:right;">Neural Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for case in cases %}
+                        <tr>
+                            <td class="text-highlight">{{ case.case_no }}</td>
+                            <td style="font-family: var(--font-ui); font-weight: 500;">{{ case.suspect_name|default:"UNKNOWN" }}</td>
+                            <td>
+                                <span class="badge {% if case.priority == 'HIGH' %}p-high{% elif case.priority == 'MEDIUM' %}p-med{% else %}p-low{% endif %}">
+                                    {{ case.priority }}
+                                </span>
+                            </td>
+                            <td>{{ case.status }}</td>
+                            <td style="text-align:right;">
+                                <a href="javascript:void(0)" onclick="openComplianceModal('{{ case.case_no }}')" class="link-action blue">
+                                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                                    Terminal Access
+                                </a>
+                                <a href="#" onclick="startLegalGeneration('{{ case.case_no }}'); return false;" class="link-action red">
+                                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                    Legal Draft
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <h3>No Active Investigations</h3>
+                    <p>System operational. No active records found in the database.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 3: History -->
+    <div>
+        <div class="section-header">
+            <div class="section-title">
+                <svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                Legal Archive Synapse
+            </div>
+        </div>
+
+        <div class="glass-panel">
+            <div class="data-table-wrapper">
+                {% if recent_cases %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Ref Number</th>
+                            <th>Timestamp</th>
+                            <th>Action Type</th>
+                            <th>Ledger Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for case in recent_cases %}
+                        <tr>
+                            <td class="text-highlight">{{ case.reference_no }}</td>
+                            <td>{{ case.timestamp|date:"M d, Y" }}</td>
+                            <td>Legal Draft Generative Sequence</td>
+                            <td style="color:var(--neon-green);">
+                                <span style="display:inline-flex;align-items:center;gap:6px;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    ARCHIVED
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    <p>No historical synapse data available.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<div id="complianceModal" class="modal-overlay">
+    <div class="glass-panel modal-box">
+        <div class="modal-header">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <h2>Security Protocol Override</h2>
+        </div>
+        <p style="color:var(--text-muted); font-size:14px; margin-bottom:24px; line-height:1.6;">
+            Pursuant to the New Artificial Intelligence Supervision Act (2025), all neural interface sessions must be logged with a valid case reference and adequate justification.
+        </p>
+
+        <form method="post" action="{% url 'authorize_ai' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Target Case / Reference ID</label>
+                <input type="text" id="complianceCaseNo" name="complaint_no" required>
+            </div>
+
+            <div class="form-group">
+                <label>Operational Justification</label>
+                <textarea name="justification" required rows="3" placeholder="Provide necessity for neural link..."></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" onclick="closeComplianceModal()" class="btn-outline" style="border-color: rgba(255,255,255,0.2); color: white;">Abort</button>
+                <button type="submit" class="btn-primary">Authorize Link</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="createCaseModal" class="modal-overlay">
+    <div class="glass-panel modal-box">
+        <div class="modal-header">
+            <svg viewBox="0 0 24 24"><polygon points="12 2 2 22 12 17 22 22 12 2"></polygon></svg>
+            <h2>Initialize New Investigation</h2>
+        </div>
+
+        <div class="form-group">
+            <label>Target Identity Alias</label>
+            <input type="text" id="newCaseSuspect" required placeholder="Subject Designation">
+        </div>
+
+        <div class="form-group">
+            <label>Threat Priority Vector</label>
+            <select id="newCasePriority">
+                <option value="LOW">Monitor Status (Low)</option>
+                <option value="MEDIUM" selected>Active Interest (Medium)</option>
+                <option value="HIGH">Critical Threat (High)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Initial Brief Synthesis</label>
+            <textarea id="newCaseDesc" required rows="3" placeholder="Input operational parameters..."></textarea>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" onclick="closeCreateCaseModal()" class="btn-outline" style="border-color: rgba(255,255,255,0.2); color: white;">Cancel</button>
+            <button type="button" onclick="submitNewCase()" id="btnCreateCase" class="btn-primary" style="background: linear-gradient(135deg, var(--neon-green), #00aa55);">
+                Initialize Record
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Modal Control
+    function showModal(id) {
+        const modal = document.getElementById(id);
+        modal.style.display = 'flex';
+        // Force reflow
+        void modal.offsetWidth;
+        modal.classList.add('active');
+    }
+
+    function hideModal(id) {
+        const modal = document.getElementById(id);
+        modal.classList.remove('active');
+        setTimeout(() => { modal.style.display = 'none'; }, 300);
+    }
+
+    function openComplianceModal(caseId) {
+        const input = document.getElementById('complianceCaseNo');
+        if (input) input.value = caseId;
+        showModal('complianceModal');
+    }
+
+    function closeComplianceModal() {
+        hideModal('complianceModal');
+    }
+
+    function openCreateCaseModal() {
+        showModal('createCaseModal');
+    }
+
+    function closeCreateCaseModal() {
+        hideModal('createCaseModal');
+        document.getElementById('newCaseSuspect').value = '';
+        document.getElementById('newCaseDesc').value = '';
+    }
+
+    // PDF Generation
+    async function startLegalGeneration(caseId) {
+        const loader = document.getElementById('cyber-loader');
+        loader.style.display = 'flex';
+
+        try {
+            const response = await fetch(`{% url 'generate_legal' %}?case_id=${caseId}`);
+            if (!response.ok) throw new Error("Generation Failed");
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = `Legal_Draft_${caseId}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            alert("Error generating document: " + error.message);
+        } finally {
+            loader.style.display = 'none';
+        }
+    }
+
+    async function submitNewCase() {
+        const suspect = document.getElementById('newCaseSuspect').value;
+        const priority = document.getElementById('newCasePriority').value;
+        const desc = document.getElementById('newCaseDesc').value;
+        const btn = document.getElementById('btnCreateCase');
+
+        if (!suspect || !desc) {
+            alert("Please fill in Target Alias and Brief.");
+            return;
+        }
+
+        btn.innerText = "INITIALIZING...";
+        btn.disabled = true;
+
+        try {
+            const response = await fetch("{% url 'create_case' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ suspect_name: suspect, description: desc, priority: priority })
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                closeCreateCaseModal();
+                window.location.reload(); 
+            } else {
+                alert("Error: " + (data.error || "Failed to create case"));
+            }
+        } catch (e) {
+            console.error(e);
+            alert("System Error: " + e);
+        } finally {
+            btn.innerText = "Initialize Record";
+            btn.disabled = false;
+        }
+    }
+</script>
+{% endblock %}

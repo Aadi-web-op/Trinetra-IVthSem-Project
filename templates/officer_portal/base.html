@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Trinetra Secure Portal{% endblock %}</title>
+    
+    <!-- Modern Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-deep: #030509;
+            --bg-ambient: #070b14;
+            --neon-blue: #00e5ff;
+            --neon-blue-glow: rgba(0, 229, 255, 0.4);
+            --neon-purple: #b300ff;
+            --neon-green: #00ff88;
+            --neon-red: #ff3366;
+            
+            --glass-bg: rgba(12, 16, 26, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-border-highlight: rgba(0, 229, 255, 0.3);
+            
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-dim: #475569;
+            
+            --font-ui: 'Outfit', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+
+            --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-bounce: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: var(--font-ui);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Ambient Dynamic Background */
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 0%, rgba(10, 20, 30, 1) 0%, var(--bg-deep) 70%);
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: floatOrb 20s infinite alternate ease-in-out;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: rgba(0, 229, 255, 0.15);
+            top: -100px;
+            left: 10%;
+            animation-duration: 25s;
+        }
+
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: rgba(179, 0, 255, 0.1);
+            bottom: -200px;
+            right: 5%;
+            animation-duration: 30s;
+            animation-delay: -10s;
+        }
+        
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: rgba(0, 255, 136, 0.08);
+            top: 40%;
+            left: 40%;
+            animation-duration: 22s;
+            animation-delay: -5s;
+        }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, 50px) scale(1.1); }
+            100% { transform: translate(-30px, -20px) scale(0.9); }
+        }
+
+        /* Subtle Tech Grid / SVG Overlay */
+        .svg-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1;
+            opacity: 0.3;
+            pointer-events: none;
+            background-image: 
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l25.98 15v30L30 60 4.02 45V15z' fill-opacity='0' stroke='%2300e5ff' stroke-width='1' stroke-opacity='0.15'/%3E%3C/svg%3E"),
+                radial-gradient(circle at center, transparent 0%, var(--bg-deep) 80%);
+            background-size: 60px 60px, 100% 100%;
+            animation: driftPattern 40s linear infinite;
+        }
+
+        @keyframes driftPattern {
+            0% { background-position: 0 0, 0 0; }
+            100% { background-position: 120px 120px, 0 0; }
+        }
+
+        /* Cyberpunk Global Loader */
+        #global-loader {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: var(--bg-deep); z-index: 99999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 30px;
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s;
+        }
+
+        .cyber-spinner {
+            position: relative; width: 100px; height: 100px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .ring {
+            position: absolute; border-radius: 50%; border: 2px solid transparent;
+        }
+
+        .ring-1 {
+            width: 100%; height: 100%;
+            border-top-color: var(--neon-blue); border-bottom-color: var(--neon-blue);
+            animation: spinRing1 2s linear infinite;
+        }
+
+        .ring-2 {
+            width: 75%; height: 75%;
+            border-left-color: var(--neon-purple); border-right-color: var(--neon-purple);
+            animation: spinRing2 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        }
+
+        .ring-3 {
+            width: 50%; height: 50%;
+            border-top-color: var(--neon-green);
+            animation: spinRing3 1s linear infinite reverse;
+        }
+
+        .core {
+            width: 20%; height: 20%;
+            background: var(--neon-blue); border-radius: 50%;
+            box-shadow: 0 0 20px var(--neon-blue);
+            animation: pulseCore 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes spinRing1 { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes spinRing2 { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
+        @keyframes spinRing3 { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes pulseCore { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1.2); opacity: 1; } }
+
+        .loader-text {
+            font-family: var(--font-code); color: var(--neon-blue); font-size: 14px;
+            letter-spacing: 4px; text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+            animation: blinkText 1.5s steps(2, start) infinite;
+        }
+
+        @keyframes blinkText { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* Top Bar */
+        .top-bar {
+            height: 80px;
+            background: rgba(8, 11, 16, 0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            z-index: 100;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+        
+        .top-bar::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--neon-blue-glow), transparent);
+            opacity: 0.5;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            text-decoration: none;
+            group: hover;
+        }
+
+        .brand-logo-wrapper {
+            position: relative;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-logo-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            border-radius: 12px;
+            opacity: 0.2;
+            transition: var(--transition-smooth);
+            transform: rotate(45deg);
+        }
+
+        .brand-container:hover .brand-logo-bg {
+            opacity: 0.4;
+            transform: rotate(135deg) scale(1.1);
+            box-shadow: 0 0 20px var(--neon-blue-glow);
+        }
+
+        .brand-logo {
+            z-index: 1;
+            color: var(--text-main);
+            font-weight: 800;
+            font-size: 20px;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--text-main);
+            text-transform: uppercase;
+        }
+
+        .brand-subtitle {
+            font-family: var(--font-code);
+            font-size: 10px;
+            color: var(--neon-blue);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            padding: 8px 16px;
+            border-radius: 30px;
+            transition: var(--transition-smooth);
+        }
+
+        .user-badge:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .user-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .user-info {
+            font-family: var(--font-code);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-main);
+            letter-spacing: 0.5px;
+        }
+
+        .btn-action {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: var(--transition-bounce);
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        .btn-action:hover {
+            color: var(--neon-red);
+            background: rgba(255, 51, 102, 0.1);
+        }
+
+        .btn-action svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            transition: var(--transition-smooth);
+        }
+
+        /* Main Container */
+        .main-container {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.2) transparent;
+        }
+        
+        .main-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .main-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .main-container::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        /* Utility Classes */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--neon-blue), #0099ff);
+            color: #000;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            font-family: var(--font-ui);
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: var(--transition-bounce);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: all 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 229, 255, 0.5);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: var(--neon-blue);
+            padding: 12px 28px;
+            border: 1px solid var(--neon-blue);
+            border-radius: 8px;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: var(--transition-bounce);
+        }
+        
+        .btn-outline:hover {
+            background: rgba(0, 229, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <!-- Global UI Loader -->
+    <div id="global-loader">
+        <div class="cyber-spinner">
+            <div class="ring ring-1"></div>
+            <div class="ring ring-2"></div>
+            <div class="ring ring-3"></div>
+            <div class="core"></div>
+        </div>
+        <div class="loader-text">Initializing Secure Connection...</div>
+    </div>
+
+    <!-- Animated Ambient Background Layer -->
+    <div class="ambient-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+    <div class="svg-overlay"></div>
+
+    <div class="top-bar">
+        <a href="{% url 'officer_dashboard' %}" class="brand-container">
+            <div class="brand-logo-wrapper">
+                <div class="brand-logo-bg"></div>
+                <div class="brand-logo">T</div>
+            </div>
+            <div class="brand-text">
+                <span class="brand">Trinetra</span>
+                <span class="brand-subtitle">Secure Gateway</span>
+            </div>
+        </a>
+        
+        <div class="nav-links">
+            {% if user.is_authenticated %}
+            <div class="user-badge">
+                <div class="user-avatar">{{ user.username|make_list|first|upper }}</div>
+                <div class="user-info">{{ user.username }} <span style="color:var(--text-muted);font-weight:400;margin-left:4px;">(Lvl 4)</span></div>
+            </div>
+            <a href="{% url 'officer_logout' %}" class="btn-action">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Logout
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="main-container">
+        {% block content %}{% endblock %}
+    </div>
+
+    {% block extra_js %}{% endblock %}
+    <script>
+        // Smooth out the page load with our global loader
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                // Minimum loading time so the aesthetic is visible 
+                setTimeout(() => {
+                    loader.style.opacity = '0';
+                    loader.style.visibility = 'hidden';
+                }, 500);
+            }
+        });
+    </script>
+</body>
+
+</html>

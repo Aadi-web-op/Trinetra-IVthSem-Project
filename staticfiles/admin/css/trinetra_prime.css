@@ -1,0 +1,243 @@
+/* TRINETRA PRIME: CYBER GLASS UI - CENTERED (v7) */
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;600&display=swap');
+
+:root {
+    --bg-void: #050b14;
+    --bg-glass: rgba(16, 23, 36, 0.7);
+    --border-glass: rgba(100, 200, 255, 0.15);
+    --neon-cyan: #00f0ff;
+    --neon-blue: #0088ff;
+
+    --text-main: #e0faff;
+    --text-dim: #647b99;
+
+    --font-ui: 'Inter', sans-serif;
+    --font-tech: 'Share Tech Mono', monospace;
+}
+
+/* 1. GLOBAL & BACKGROUND */
+body {
+    background-color: var(--bg-void) !important;
+    background-image:
+        radial-gradient(circle at 50% 0%, #0a1525 0%, transparent 60%),
+        linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+    background-size: 100% 100%, 50px 50px, 50px 50px;
+    color: var(--text-main) !important;
+    font-family: var(--font-ui) !important;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* 2. HEADER */
+#header {
+    background: rgba(5, 11, 20, 0.9) !important;
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid var(--border-glass) !important;
+    padding: 0 50px !important;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+#branding h1 {
+    font-family: var(--font-tech);
+    color: var(--neon-cyan) !important;
+    font-size: 24px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+    margin: 0;
+}
+
+#user-tools {
+    font-family: var(--font-tech);
+    color: var(--text-dim) !important;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+/* 3. CENTERED CONTENT LAYOUT */
+#content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px !important;
+    width: 90%;
+}
+
+/* DASHBOARD SPECIFIC: FLEX CENTER */
+.dashboard #content {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.dashboard #content-main {
+    flex: 2;
+    min-width: 450px;
+    float: none !important;
+    /* Override Django */
+}
+
+.dashboard #content-related {
+    flex: 1;
+    min-width: 300px;
+    float: none !important;
+    /* Override Django */
+    margin-right: 0 !important;
+    position: relative !important;
+    top: 0 !important;
+    right: 0 !important;
+}
+
+/* 4. GLASS MODULES (Cards) */
+.module,
+.login .content {
+    background: var(--bg-glass) !important;
+    border: 1px solid var(--border-glass) !important;
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+    margin-bottom: 30px !important;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.module:hover {
+    border-color: rgba(0, 240, 255, 0.4) !important;
+    box-shadow: 0 15px 45px rgba(0, 240, 255, 0.15);
+}
+
+.module caption,
+.module h2 {
+    background: rgba(0, 240, 255, 0.08) !important;
+    color: var(--neon-cyan) !important;
+    font-family: var(--font-tech);
+    font-size: 16px;
+    padding: 18px 25px !important;
+    border-bottom: 1px solid var(--border-glass);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* 5. TABLES */
+#changelist table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+#changelist thead th {
+    background: rgba(0, 0, 0, 0.5) !important;
+    color: var(--text-dim) !important;
+    padding: 15px;
+    text-align: left;
+    font-family: var(--font-tech);
+    text-transform: uppercase;
+    font-size: 12px;
+    border-bottom: 2px solid var(--neon-blue);
+}
+
+#changelist tbody tr {
+    background: transparent;
+    transition: background 0.2s;
+}
+
+#changelist tbody tr:hover {
+    background: rgba(0, 240, 255, 0.05) !important;
+}
+
+#changelist td {
+    padding: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+}
+
+#changelist td a {
+    color: var(--neon-cyan) !important;
+    font-weight: 600;
+}
+
+/* 6. INPUTS & BUTTONS */
+input,
+select,
+textarea {
+    background: rgba(0, 0, 0, 0.5) !important;
+    border: 1px solid var(--border-glass) !important;
+    color: #fff !important;
+    padding: 12px 15px !important;
+    border-radius: 4px;
+    font-family: var(--font-ui);
+    box-sizing: border-box;
+}
+
+input:focus,
+select:focus {
+    border-color: var(--neon-cyan) !important;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
+    outline: none;
+    background: rgba(0, 0, 0, 0.8) !important;
+}
+
+.button,
+input[type=submit],
+.submit-row input {
+    background: transparent !important;
+    color: var(--neon-cyan) !important;
+    border: 1px solid var(--neon-cyan) !important;
+    padding: 12px 28px !important;
+    font-family: var(--font-tech);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s;
+}
+
+.button:hover,
+input[type=submit]:hover {
+    background: var(--neon-cyan) !important;
+    color: #050b14 !important;
+    box-shadow: 0 0 25px var(--neon-cyan);
+}
+
+/* 7. LOGIN PAGE - CENTERED ABSOLUTELY */
+body.login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.login .content {
+    width: 450px;
+    padding: 50px !important;
+    background: rgba(10, 20, 30, 0.9) !important;
+    border: 1px solid var(--neon-cyan) !important;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.8), inset 0 0 40px rgba(0, 240, 255, 0.05);
+}
+
+.login .content::before {
+    content: "COMMANDER AUTH";
+    display: block;
+    text-align: center;
+    font-family: var(--font-tech);
+    color: var(--neon-cyan);
+    font-size: 20px;
+    letter-spacing: 6px;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-glass);
+}
+
+.login h1 {
+    display: none;
+}

@@ -1,0 +1,180 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block bodyclass %}{{ block.super }} dashboard-grid{% endblock %}
+
+{% block content %}
+<style>
+    .dashboard-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+        padding: 20px 0;
+    }
+
+    .app-card {
+        background: rgba(10, 15, 20, 0.6);
+        border: 1px solid var(--glass-border);
+        border-radius: 4px;
+        overflow: hidden;
+        transition: 0.3s;
+        position: relative;
+    }
+
+    .app-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 20px rgba(0, 243, 255, 0.15);
+        border-color: var(--neon-blue);
+    }
+
+    .app-header {
+        background: rgba(0, 243, 255, 0.05);
+        padding: 15px 20px;
+        border-bottom: 1px solid var(--glass-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .app-name {
+        font-family: var(--font-hud);
+        color: var(--neon-blue);
+        font-size: 16px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-decoration: none;
+    }
+
+    .app-name:hover {
+        text-decoration: none;
+        text-shadow: 0 0 8px var(--neon-blue);
+    }
+
+    .model-list {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    .model-item {
+        border-bottom: 1px solid #1a1a1a;
+        transition: 0.2s;
+    }
+
+    .model-item:last-child {
+        border-bottom: none;
+    }
+
+    .model-item:hover {
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .model-link-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 20px;
+    }
+
+    .model-name {
+        font-family: var(--font-ui);
+        color: var(--text-main);
+        font-size: 15px;
+        text-decoration: none;
+        flex-grow: 1;
+    }
+
+    .model-name:hover {
+        color: white;
+    }
+
+    .action-links {
+        display: flex;
+        gap: 15px;
+    }
+
+    .action-link {
+        font-family: var(--font-code);
+        font-size: 11px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        text-decoration: none;
+        padding: 4px 8px;
+        border: 1px solid #333;
+        border-radius: 2px;
+        transition: 0.2s;
+    }
+
+    .action-link.add {
+        color: var(--neon-blue);
+        border-color: rgba(0, 243, 255, 0.3);
+    }
+
+    .action-link.change {
+        color: #aaa;
+    }
+
+    .action-link:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: white;
+        color: white;
+    }
+
+    /* Remove default excessive padding */
+    .dashboard #content {
+        padding: 20px 40px;
+    }
+
+    /* Hide sidebar if present */
+    #content-related {
+        display: none;
+    }
+
+    .colM {
+        margin: 0 !important;
+    }
+</style>
+
+<div id="content-main">
+    {% if app_list %}
+    <div class="dashboard-container">
+        {% for app in app_list %}
+        <div class="app-card">
+            <div class="app-header">
+                <a href="{{ app.app_url }}" class="app-name"
+                    title="{% blocktrans with name=app.name %}Models in the {{ name }} application{% endblocktrans %}">
+                    {{ app.name }}
+                </a>
+            </div>
+            <ul class="model-list">
+                {% for model in app.models %}
+                <li class="model-item">
+                    <div class="model-link-row">
+                        {% if model.admin_url %}
+                        <a href="{{ model.admin_url }}" class="model-name">{{ model.name }}</a>
+                        {% else %}
+                        <span class="model-name">{{ model.name }}</span>
+                        {% endif %}
+
+                        <div class="action-links">
+                            {% if model.add_url %}
+                            <a href="{{ model.add_url }}" class="action-link add">{% trans 'Add' %}</a>
+                            {% endif %}
+                            {% if model.admin_url %}
+                            <a href="{{ model.admin_url }}" class="action-link change">{% trans 'Change' %}</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>{% trans "You don't have permission to view or edit anything." %}</p>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block sidebar %}{% endblock %}
