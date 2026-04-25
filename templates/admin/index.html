@@ -9,171 +9,157 @@
   <!-- Content Header -->
   <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
     <div>
-      <h1 class="text-3xl font-bold tracking-tight text-white mb-2">Trinetra Command Overview</h1>
-      <p class="text-slate-400 text-sm">Real-time system operations & access logs monitoring.</p>
+      <h1 class="text-3xl font-heading font-bold tracking-widest text-white uppercase glitch-hover" data-text="System Operations">System Operations</h1>
+      <p class="text-muted font-mono text-xs uppercase mt-1">> Real-time access logs and telemetry</p>
     </div>
     <div class="flex space-x-3">
-      <button class="bg-slate-800 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-slate-700 transition-all border border-slate-700">
-        <i data-lucide="calendar" class="w-4 h-4 mr-2"></i> Last 30 Days
+      <button class="btn-cyber px-4 py-2 text-xs flex items-center font-bold tracking-widest uppercase text-muted hover:text-white border border-white/10 bg-black/40">
+        <i data-lucide="calendar" class="w-4 h-4 mr-2"></i> 30D Window
       </button>
-      <button class="bg-gradient-to-r from-neonBlue to-blue-500 text-slate-950 px-4 py-2 rounded-lg font-semibold text-sm flex items-center hover:opacity-90 transition-all shadow-[0_0_15px_rgba(0,198,255,0.3)]">
-        <i data-lucide="download" class="w-4 h-4 mr-2"></i> Export Audit
+      <button class="btn-cyber px-4 py-2 text-xs flex items-center font-bold tracking-widest uppercase shadow-[0_0_15px_rgba(0,240,255,0.2)]">
+        <i data-lucide="download" class="w-4 h-4 mr-2"></i> Export Data
       </button>
     </div>
   </div>
 
   <!-- Stats Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
     
-    <!-- Stat 1 -->
-    <div class="bg-glassBg border border-slate-800/60 rounded-xl p-5 backdrop-blur-md relative overflow-hidden group hover:border-slate-700 transition-all duration-300">
-      <div class="absolute inset-0 bg-gradient-to-br from-neonBlue/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-      <div class="relative z-10">
-        <div class="flex justify-between items-start mb-4">
-          <div>
-            <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">Total Users</p>
-            <h3 class="text-3xl font-bold text-white mt-1">1,248</h3>
-          </div>
-          <div class="p-2.5 bg-slate-800/80 border border-slate-700 rounded-lg text-neonBlue group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(0,198,255,0.15)]">
-            <i data-lucide="users" class="w-5 h-5"></i>
-          </div>
+    <!-- Stat 1: Total Users -->
+    <div class="card-glass p-5 relative overflow-hidden group">
+      <div class="absolute inset-0 bg-gradient-to-br from-cyan/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      <div class="flex justify-between items-start mb-4 relative z-10">
+        <div>
+          <p class="text-[10px] font-mono text-muted uppercase tracking-widest">Active Operatives</p>
+          <h3 class="text-3xl font-heading font-bold text-white mt-1 tracking-widest">1,248</h3>
         </div>
-        <div class="flex items-center text-xs text-neonGreen font-medium">
-          <i data-lucide="trending-up" class="w-3.5 h-3.5 mr-1.5 border border-neonGreen/30 bg-neonGreen/10 rounded-full p-0.5"></i>
-          <span>12% verified this week</span>
+        <div class="p-2.5 bg-black/60 border border-cyan/30 rounded text-cyan shadow-[0_0_15px_rgba(0,240,255,0.1)] group-hover:scale-110 transition-transform">
+          <i data-lucide="users" class="w-5 h-5"></i>
         </div>
+      </div>
+      <div class="flex items-center text-[10px] font-mono text-green uppercase tracking-widest relative z-10">
+        <i data-lucide="trending-up" class="w-3 h-3 mr-1.5 border border-green/30 bg-green/10 rounded-full p-0.5"></i>
+        <span>+12% VERIFIED THIS CYCLE</span>
       </div>
     </div>
 
-    <!-- Stat 2 -->
-    <div class="bg-glassBg border border-slate-800/60 rounded-xl p-5 backdrop-blur-md relative overflow-hidden group hover:border-slate-700 transition-all duration-300">
-      <div class="absolute inset-0 bg-gradient-to-br from-neonPurple/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-      <div class="relative z-10">
-        <div class="flex justify-between items-start mb-4">
-          <div>
-            <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">Active Devices</p>
-            <h3 class="text-3xl font-bold text-white mt-1">42</h3>
-          </div>
-          <div class="p-2.5 bg-slate-800/80 border border-slate-700 rounded-lg text-neonPurple group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(127,90,240,0.15)]">
-            <i data-lucide="laptop" class="w-5 h-5"></i>
-          </div>
+    <!-- Stat 2: Active Devices -->
+    <div class="card-glass p-5 relative overflow-hidden group">
+      <div class="absolute inset-0 bg-gradient-to-br from-purple/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      <div class="flex justify-between items-start mb-4 relative z-10">
+        <div>
+          <p class="text-[10px] font-mono text-muted uppercase tracking-widest">Linked Terminals</p>
+          <h3 class="text-3xl font-heading font-bold text-white mt-1 tracking-widest">42</h3>
         </div>
-        <div class="flex items-center text-xs text-neonGreen font-medium">
-          <span class="flex items-center justify-center w-4 h-4 rounded-full bg-neonGreen/20 text-neonGreen mr-1.5 shadow-[0_0_8px_rgba(44,182,125,0.4)]">
-            <span class="w-1.5 h-1.5 bg-neonGreen rounded-full"></span>
-          </span>
-          <span>All nodes operational</span>
+        <div class="p-2.5 bg-black/60 border border-purple/30 rounded text-purple shadow-[0_0_15px_rgba(139,92,246,0.1)] group-hover:scale-110 transition-transform">
+          <i data-lucide="laptop" class="w-5 h-5"></i>
         </div>
+      </div>
+      <div class="flex items-center text-[10px] font-mono text-cyan uppercase tracking-widest relative z-10">
+        <span class="w-1.5 h-1.5 bg-cyan rounded-full mr-1.5 shadow-[0_0_5px_#00F0FF] animate-pulse"></span>
+        <span>ALL NODES OPERATIONAL</span>
       </div>
     </div>
 
-    <!-- Stat 3 -->
-    <div class="bg-glassBg border border-slate-800/60 rounded-xl p-5 backdrop-blur-md relative overflow-hidden group hover:border-slate-700 transition-all duration-300">
-      <div class="absolute inset-0 bg-gradient-to-br from-neonGreen/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-      <div class="relative z-10">
-        <div class="flex justify-between items-start mb-4">
-          <div>
-            <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">Logs Today</p>
-            <h3 class="text-3xl font-bold text-white mt-1">8,391</h3>
-          </div>
-          <div class="p-2.5 bg-slate-800/80 border border-slate-700 rounded-lg text-neonGreen group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(44,182,125,0.15)]">
-            <i data-lucide="database" class="w-5 h-5"></i>
-          </div>
+    <!-- Stat 3: Logs Today -->
+    <div class="card-glass p-5 relative overflow-hidden group">
+      <div class="absolute inset-0 bg-gradient-to-br from-green/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      <div class="flex justify-between items-start mb-4 relative z-10">
+        <div>
+          <p class="text-[10px] font-mono text-muted uppercase tracking-widest">Daily Telemetry</p>
+          <h3 class="text-3xl font-heading font-bold text-white mt-1 tracking-widest split-flap" data-value="8391">8391</h3>
         </div>
-        <div class="flex items-center text-xs text-neonBlue font-medium">
-          <i data-lucide="activity" class="w-3.5 h-3.5 mr-1.5 border border-neonBlue/30 bg-neonBlue/10 rounded-full p-0.5"></i>
-          <span>Telemetry nominal</span>
+        <div class="p-2.5 bg-black/60 border border-green/30 rounded text-green shadow-[0_0_15px_rgba(0,255,156,0.1)] group-hover:scale-110 transition-transform">
+          <i data-lucide="database" class="w-5 h-5"></i>
         </div>
+      </div>
+      <div class="flex items-center text-[10px] font-mono text-green uppercase tracking-widest relative z-10">
+        <i data-lucide="activity" class="w-3 h-3 mr-1.5"></i>
+        <span>DATA STREAM NOMINAL</span>
       </div>
     </div>
 
-    <!-- Stat 4 -->
-    <div class="bg-glassBg border border-slate-800/60 rounded-xl p-5 backdrop-blur-md relative overflow-hidden group hover:border-neonRed/40 transition-all duration-300">
-      <div class="absolute inset-0 bg-gradient-to-br from-neonRed/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-      <div class="relative z-10">
-        <div class="flex justify-between items-start mb-4">
-          <div>
-            <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">Security Alerts</p>
-            <h3 class="text-3xl font-bold text-white mt-1">3</h3>
-          </div>
-          <div class="p-2.5 bg-red-950/40 border border-neonRed/30 rounded-lg text-neonRed group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(239,69,101,0.2)]">
-            <i data-lucide="shield-alert" class="w-5 h-5"></i>
-          </div>
+    <!-- Stat 4: Security Alerts -->
+    <div class="card-glass p-5 relative overflow-hidden group border-red/20">
+      <div class="absolute inset-0 bg-gradient-to-br from-red/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      <div class="flex justify-between items-start mb-4 relative z-10">
+        <div>
+          <p class="text-[10px] font-mono text-muted uppercase tracking-widest">Threat Detections</p>
+          <h3 class="text-3xl font-heading font-bold text-white mt-1 tracking-widest">3</h3>
         </div>
-        <div class="flex items-center text-xs text-neonRed font-medium">
-          <i data-lucide="alert-triangle" class="w-3.5 h-3.5 mr-1.5"></i>
-          <span>Action required immediately</span>
+        <div class="p-2.5 bg-red/10 border border-red/30 rounded text-red shadow-[0_0_15px_rgba(255,45,85,0.2)] group-hover:scale-110 transition-transform">
+          <i data-lucide="shield-alert" class="w-5 h-5"></i>
         </div>
+      </div>
+      <div class="flex items-center text-[10px] font-mono text-red uppercase tracking-widest relative z-10">
+        <i data-lucide="alert-triangle" class="w-3 h-3 mr-1.5"></i>
+        <span>IMMEDIATE ACTION REQ</span>
       </div>
     </div>
   </div>
 
   <!-- Divider -->
   <div class="py-2">
-    <div class="h-px w-full bg-gradient-to-r from-transparent via-slate-800 to-transparent"></div>
+    <div class="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
   </div>
 
-  <div class="flex items-center justify-between mb-2">
-    <h2 class="text-xl font-bold text-white tracking-wide">System Management Layers</h2>
-    <div class="text-xs text-slate-500 hidden sm:block">Select a module to view or configure its assets</div>
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-xl font-heading font-bold text-white tracking-widest uppercase">System Sub-Routines</h2>
+    <div class="text-[10px] font-mono text-muted uppercase tracking-widest hidden sm:block">> SELECT MODULE TO CONFIGURE</div>
   </div>
   
   {% if app_list %}
   <!-- Feature Cards Grid -->
   <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
     {% for app in app_list %}
-    <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden group hover:-translate-y-1 hover:shadow-2xl hover:shadow-neonBlue/10 hover:border-slate-700 transition-all duration-300 flex flex-col h-full">
+    <div class="card-glass overflow-hidden group hover:border-cyan/30 transition-all duration-300 flex flex-col h-full">
       
       <!-- Card Header -->
-      <div class="px-5 py-4 bg-slate-800/40 border-b border-slate-800 flex items-center justify-between">
-        <a href="{{ app.app_url }}" class="text-base font-semibold text-slate-100 group-hover:text-neonBlue transition-colors flex items-center uppercase tracking-wide">
+      <div class="px-5 py-4 bg-black/40 border-b border-white/5 flex items-center justify-between">
+        <a href="{{ app.app_url }}" class="text-sm font-heading font-bold text-white group-hover:text-cyan transition-colors flex items-center uppercase tracking-widest">
           {% if app.name == 'Audit Logs' %}
-            <i data-lucide="activity" class="w-4 h-4 mr-2.5 text-slate-400 group-hover:text-neonBlue"></i>
+            <i data-lucide="activity" class="w-4 h-4 mr-2.5 text-cyan"></i>
           {% elif app.name == 'Authentication and Authorization' %}
-            <i data-lucide="users" class="w-4 h-4 mr-2.5 text-slate-400 group-hover:text-neonBlue"></i>
+            <i data-lucide="users" class="w-4 h-4 mr-2.5 text-cyan"></i>
           {% elif app.name == 'Officer Portal' %}
-            <i data-lucide="shield" class="w-4 h-4 mr-2.5 text-slate-400 group-hover:text-neonBlue"></i>
+            <i data-lucide="briefcase" class="w-4 h-4 mr-2.5 text-cyan"></i>
           {% elif app.name == 'Access Control' %}
-            <i data-lucide="key" class="w-4 h-4 mr-2.5 text-slate-400 group-hover:text-neonBlue"></i>
+            <i data-lucide="key" class="w-4 h-4 mr-2.5 text-cyan"></i>
           {% else %}
-            <i data-lucide="box" class="w-4 h-4 mr-2.5 text-slate-400 group-hover:text-neonBlue"></i>
+            <i data-lucide="box" class="w-4 h-4 mr-2.5 text-cyan"></i>
           {% endif %}
           {{ app.name }}
         </a>
       </div>
 
-      <!-- Models List (Fills height) -->
-      <div class="flex-1 flex flex-col p-2 space-y-1">
+      <!-- Models List -->
+      <div class="flex-1 flex flex-col p-2">
         {% for model in app.models %}
-        <div class="flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-slate-800/50 transition-colors group/row">
+        <div class="flex items-center justify-between px-3 py-2.5 rounded hover:bg-white/5 transition-colors group/row">
           
           {% if model.admin_url %}
-            <a href="{{ model.admin_url }}" class="text-sm font-medium text-slate-300 group-hover/row:text-white flex items-center transition-colors">
-              <span class="w-2 h-2 rounded-full bg-slate-700 mr-3 group-hover/row:bg-neonBlue transition-colors duration-300"></span>
+            <a href="{{ model.admin_url }}" class="text-xs font-mono text-muted group-hover/row:text-white flex items-center transition-colors uppercase tracking-wide">
+              <span class="w-1.5 h-1.5 rounded-full bg-white/20 mr-3 group-hover/row:bg-cyan group-hover/row:shadow-[0_0_5px_#00F0FF] transition-all"></span>
               {{ model.name }}
             </a>
           {% else %}
-            <span class="text-sm text-slate-500 flex items-center">
-              <span class="w-2 h-2 rounded-full bg-slate-800 mr-3"></span>
+            <span class="text-xs font-mono text-muted flex items-center uppercase tracking-wide">
+              <span class="w-1.5 h-1.5 rounded-full bg-white/10 mr-3"></span>
               {{ model.name }}
             </span>
           {% endif %}
 
-          <div class="flex items-center space-x-1.5 opacity-0 group-hover/row:opacity-100 transition-opacity">
+          <div class="flex items-center space-x-2 opacity-0 group-hover/row:opacity-100 transition-opacity">
             {% if model.add_url %}
-            <div class="relative group/tooltip">
-              <a href="{{ model.add_url }}" class="flex items-center justify-center w-7 h-7 rounded-md bg-neonGreen/10 text-neonGreen hover:bg-neonGreen hover:text-slate-900 transition-colors tooltip">
-                <i data-lucide="plus" class="w-4 h-4"></i>
-              </a>
-            </div>
+            <a href="{{ model.add_url }}" class="w-6 h-6 flex items-center justify-center rounded border border-green/30 text-green hover:bg-green/10 transition-colors" title="Add">
+              <i data-lucide="plus" class="w-3 h-3"></i>
+            </a>
             {% endif %}
             
             {% if model.admin_url %}
-            <div class="relative group/tooltip">
-              <a href="{{ model.admin_url }}" class="flex items-center justify-center w-7 h-7 rounded-md bg-neonBlue/10 text-neonBlue hover:bg-neonBlue hover:text-slate-900 transition-colors">
-                <i data-lucide="edit-3" class="w-4 h-4"></i>
-              </a>
-            </div>
+            <a href="{{ model.admin_url }}" class="w-6 h-6 flex items-center justify-center rounded border border-cyan/30 text-cyan hover:bg-cyan/10 transition-colors" title="Edit">
+              <i data-lucide="edit-3" class="w-3 h-3"></i>
+            </a>
             {% endif %}
           </div>
         </div>
@@ -185,21 +171,14 @@
   </div>
   {% else %}
   <!-- Empty State -->
-  <div class="flex flex-col items-center justify-center py-20 border border-slate-800 border-dashed rounded-2xl bg-slate-900/30">
-    <div class="w-16 h-16 rounded-full bg-slate-800/80 border border-slate-700 flex items-center justify-center mb-6 shadow-inner">
-      <i data-lucide="shield-alert" class="w-8 h-8 text-slate-500"></i>
+  <div class="flex flex-col items-center justify-center py-20 border border-white/5 border-dashed rounded bg-black/20">
+    <div class="w-16 h-16 rounded bg-red/5 border border-red/20 flex items-center justify-center mb-6 shadow-inner">
+      <i data-lucide="shield-alert" class="w-8 h-8 text-red"></i>
     </div>
-    <h3 class="text-xl font-semibold text-white mb-2">Access Denied</h3>
-    <p class="text-slate-400 max-w-sm text-center text-sm">You don't have permission to view or edit anything. Contact the system administrator for necessary clearances.</p>
+    <h3 class="text-xl font-heading font-bold text-white mb-2 uppercase tracking-widest">Access Restricted</h3>
+    <p class="text-muted font-mono text-[10px] text-center uppercase max-w-sm">INSUFFICIENT CLEARANCE. YOU DO NOT HAVE PERMISSION TO VIEW OR EDIT MODULES.</p>
   </div>
   {% endif %}
 
 </div>
-
-<!-- Auto-re-initialize Lucide Icons when dynamic DOM changes happen (if any) -->
-<script>
-  if (typeof lucide !== 'undefined') {
-    lucide.createIcons();
-  }
-</script>
 {% endblock %}

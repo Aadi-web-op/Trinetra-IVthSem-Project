@@ -1,515 +1,306 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Trinetra Secure Portal{% endblock %}</title>
+    <title>{% block title %}TRINETRA | NEURAL COMMAND{% endblock %}</title>
     
-    <!-- Modern Premium Fonts -->
+    <!-- Modern Premium Fonts from Design System -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN for now, can be replaced by build process) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bg: '#050A0F',
+                        surface: '#0C1520',
+                        border: 'rgba(0, 240, 255, 0.08)',
+                        cyan: '#00F0FF',
+                        amber: '#FFB300',
+                        red: '#FF2D55',
+                        green: '#00FF9C',
+                        purple: '#8B5CF6',
+                        muted: '#4A6070',
+                    },
+                    fontFamily: {
+                        heading: ['Rajdhani', 'sans-serif'],
+                        body: ['DM Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Core Design System CSS -->
+    <link rel="stylesheet" href="{% static 'css/trinetra.css' %}">
+    {% block extra_css %}{% endblock %}
 
     <style>
-        :root {
-            --bg-deep: #030509;
-            --bg-ambient: #070b14;
-            --neon-blue: #00e5ff;
-            --neon-blue-glow: rgba(0, 229, 255, 0.4);
-            --neon-purple: #b300ff;
-            --neon-green: #00ff88;
-            --neon-red: #ff3366;
-            
-            --glass-bg: rgba(12, 16, 26, 0.5);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-border-highlight: rgba(0, 229, 255, 0.3);
-            
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --text-dim: #475569;
-            
-            --font-ui: 'Outfit', sans-serif;
-            --font-code: 'JetBrains Mono', monospace;
-
-            --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            --transition-bounce: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background-color: var(--bg-deep);
-            color: var(--text-main);
-            font-family: var(--font-ui);
-            height: 100vh;
+        /* Sidebar Layout Specifics */
+        .app-container {
             display: flex;
-            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
             overflow: hidden;
             position: relative;
+            z-index: 1; /* Above canvas background */
         }
 
-        /* Ambient Dynamic Background */
-        .ambient-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -2;
-            overflow: hidden;
-            background: radial-gradient(circle at 50% 0%, rgba(10, 20, 30, 1) 0%, var(--bg-deep) 70%);
-        }
-
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.4;
-            animation: floatOrb 20s infinite alternate ease-in-out;
-        }
-
-        .orb-1 {
-            width: 400px;
-            height: 400px;
-            background: rgba(0, 229, 255, 0.15);
-            top: -100px;
-            left: 10%;
-            animation-duration: 25s;
-        }
-
-        .orb-2 {
-            width: 500px;
-            height: 500px;
-            background: rgba(179, 0, 255, 0.1);
-            bottom: -200px;
-            right: 5%;
-            animation-duration: 30s;
-            animation-delay: -10s;
-        }
-        
-        .orb-3 {
-            width: 300px;
-            height: 300px;
-            background: rgba(0, 255, 136, 0.08);
-            top: 40%;
-            left: 40%;
-            animation-duration: 22s;
-            animation-delay: -5s;
-        }
-
-        @keyframes floatOrb {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(30px, 50px) scale(1.1); }
-            100% { transform: translate(-30px, -20px) scale(0.9); }
-        }
-
-        /* Subtle Tech Grid / SVG Overlay */
-        .svg-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: -1;
-            opacity: 0.3;
-            pointer-events: none;
-            background-image: 
-                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l25.98 15v30L30 60 4.02 45V15z' fill-opacity='0' stroke='%2300e5ff' stroke-width='1' stroke-opacity='0.15'/%3E%3C/svg%3E"),
-                radial-gradient(circle at center, transparent 0%, var(--bg-deep) 80%);
-            background-size: 60px 60px, 100% 100%;
-            animation: driftPattern 40s linear infinite;
-        }
-
-        @keyframes driftPattern {
-            0% { background-position: 0 0, 0 0; }
-            100% { background-position: 120px 120px, 0 0; }
-        }
-
-        /* Cyberpunk Global Loader */
-        #global-loader {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: var(--bg-deep); z-index: 99999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 30px;
-            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s;
-        }
-
-        .cyber-spinner {
-            position: relative; width: 100px; height: 100px;
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        .ring {
-            position: absolute; border-radius: 50%; border: 2px solid transparent;
-        }
-
-        .ring-1 {
-            width: 100%; height: 100%;
-            border-top-color: var(--neon-blue); border-bottom-color: var(--neon-blue);
-            animation: spinRing1 2s linear infinite;
-        }
-
-        .ring-2 {
-            width: 75%; height: 75%;
-            border-left-color: var(--neon-purple); border-right-color: var(--neon-purple);
-            animation: spinRing2 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-        }
-
-        .ring-3 {
-            width: 50%; height: 50%;
-            border-top-color: var(--neon-green);
-            animation: spinRing3 1s linear infinite reverse;
-        }
-
-        .core {
-            width: 20%; height: 20%;
-            background: var(--neon-blue); border-radius: 50%;
-            box-shadow: 0 0 20px var(--neon-blue);
-            animation: pulseCore 1s ease-in-out infinite alternate;
-        }
-
-        @keyframes spinRing1 { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes spinRing2 { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
-        @keyframes spinRing3 { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes pulseCore { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1.2); opacity: 1; } }
-
-        .loader-text {
-            font-family: var(--font-code); color: var(--neon-blue); font-size: 14px;
-            letter-spacing: 4px; text-transform: uppercase;
-            text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
-            animation: blinkText 1.5s steps(2, start) infinite;
-        }
-
-        @keyframes blinkText { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-        /* Top Bar */
-        .top-bar {
-            height: 80px;
-            background: rgba(8, 11, 16, 0.6);
+        .sidebar {
+            width: 64px;
+            background: rgba(8, 11, 16, 0.85);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
-            border-bottom: 1px solid var(--glass-border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 40px;
-            z-index: 100;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-            position: relative;
-        }
-        
-        .top-bar::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--neon-blue-glow), transparent);
-            opacity: 0.5;
-        }
-
-        .brand-container {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            text-decoration: none;
-            group: hover;
-        }
-
-        .brand-logo-wrapper {
-            position: relative;
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .brand-logo-bg {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
-            border-radius: 12px;
-            opacity: 0.2;
-            transition: var(--transition-smooth);
-            transform: rotate(45deg);
-        }
-
-        .brand-container:hover .brand-logo-bg {
-            opacity: 0.4;
-            transform: rotate(135deg) scale(1.1);
-            box-shadow: 0 0 20px var(--neon-blue-glow);
-        }
-
-        .brand-logo {
-            z-index: 1;
-            color: var(--text-main);
-            font-weight: 800;
-            font-size: 20px;
-        }
-
-        .brand-text {
+            border-right: 1px solid var(--clr-border);
             display: flex;
             flex-direction: column;
-        }
-
-        .brand {
-            font-size: 20px;
-            font-weight: 800;
-            letter-spacing: 2px;
-            color: var(--text-main);
-            text-transform: uppercase;
-        }
-
-        .brand-subtitle {
-            font-family: var(--font-code);
-            font-size: 10px;
-            color: var(--neon-blue);
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 25px;
-        }
-
-        .user-badge {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--glass-border);
-            padding: 8px 16px;
-            border-radius: 30px;
-            transition: var(--transition-smooth);
-        }
-
-        .user-badge:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(255, 255, 255, 0.15);
-        }
-
-        .user-avatar {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 800;
-            color: #fff;
-        }
-
-        .user-info {
-            font-family: var(--font-code);
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-main);
-            letter-spacing: 0.5px;
-        }
-
-        .btn-action {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 600;
-            transition: var(--transition-bounce);
-            padding: 8px 16px;
-            border-radius: 8px;
-        }
-
-        .btn-action:hover {
-            color: var(--neon-red);
-            background: rgba(255, 51, 102, 0.1);
-        }
-
-        .btn-action svg {
-            width: 18px;
-            height: 18px;
-            stroke: currentColor;
-            stroke-width: 2;
-            fill: none;
-            transition: var(--transition-smooth);
-        }
-
-        /* Main Container */
-        .main-container {
-            flex-grow: 1;
-            padding: 40px;
-            overflow-y: auto;
-            overflow-x: hidden;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(255,255,255,0.2) transparent;
-        }
-        
-        .main-container::-webkit-scrollbar {
-            width: 6px;
-        }
-        .main-container::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .main-container::-webkit-scrollbar-thumb {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-
-        /* Utility Classes */
-        .glass-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--neon-blue), #0099ff);
-            color: #000;
-            padding: 12px 28px;
-            border: none;
-            border-radius: 8px;
-            font-family: var(--font-ui);
-            font-weight: 700;
-            font-size: 15px;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: var(--transition-bounce);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3);
-            position: relative;
+            transition: width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             overflow: hidden;
+            position: relative;
+            z-index: 50;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
         }
 
-        .btn-primary::before {
+        .sidebar:hover {
+            width: 220px;
+        }
+
+        /* Sidebar Item Hover States */
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            color: var(--clr-muted);
+            text-decoration: none;
+            position: relative;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-item::before {
             content: '';
             position: absolute;
-            top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: all 0.5s;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--clr-cyan);
+            opacity: 0;
+            transition: opacity 0.2s;
         }
 
-        .btn-primary:hover::before {
-            left: 100%;
+        .sidebar-item:hover, .sidebar-item.active {
+            color: var(--clr-cyan);
+            background: linear-gradient(90deg, rgba(0,240,255,0.1), transparent);
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 229, 255, 0.5);
+        .sidebar-item:hover::before, .sidebar-item.active::before {
+            opacity: 1;
         }
-        
-        .btn-outline {
-            background: transparent;
-            color: var(--neon-blue);
-            padding: 12px 28px;
-            border: 1px solid var(--neon-blue);
-            border-radius: 8px;
-            font-family: var(--font-ui);
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
+
+        .sidebar-icon {
+            min-width: 24px;
+            margin-right: 1.5rem;
+        }
+
+        .sidebar-label {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: var(--transition-bounce);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar:hover .sidebar-label {
+            opacity: 1;
+            transition-delay: 0.1s;
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid rgba(0,240,255,0.1);
+            margin-bottom: 1rem;
+        }
+
+        .brand-icon {
+            min-width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--clr-cyan), var(--clr-purple));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: #000;
+            margin-right: 1.5rem;
+            box-shadow: 0 0 15px rgba(0,240,255,0.3);
+        }
+
+        /* Hex Stream Bottom */
+        .hex-stream {
+            margin-top: auto;
+            padding: 1rem;
+            height: 120px;
+            overflow: hidden;
+            font-family: var(--font-data);
+            font-size: 10px;
+            color: var(--clr-cyan);
+            opacity: 0.15;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            word-wrap: break-word;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            position: relative;
         }
         
-        .btn-outline:hover {
-            background: rgba(0, 229, 255, 0.1);
-            box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
-            transform: translateY(-2px);
+        /* Command Palette Shell */
+        #cmd-palette {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            z-index: 99999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        #cmd-palette.active {
+            display: flex;
+            opacity: 1;
         }
 
     </style>
-    {% block extra_css %}{% endblock %}
 </head>
-
 <body>
-    <!-- Global UI Loader -->
-    <div id="global-loader">
-        <div class="cyber-spinner">
-            <div class="ring ring-1"></div>
-            <div class="ring ring-2"></div>
-            <div class="ring ring-3"></div>
-            <div class="core"></div>
-        </div>
-        <div class="loader-text">Initializing Secure Connection...</div>
-    </div>
 
-    <!-- Animated Ambient Background Layer -->
-    <div class="ambient-bg">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-    </div>
-    <div class="svg-overlay"></div>
-
-    <div class="top-bar">
-        <a href="{% url 'officer_dashboard' %}" class="brand-container">
-            <div class="brand-logo-wrapper">
-                <div class="brand-logo-bg"></div>
-                <div class="brand-logo">T</div>
-            </div>
-            <div class="brand-text">
-                <span class="brand">Trinetra</span>
-                <span class="brand-subtitle">Secure Gateway</span>
-            </div>
-        </a>
+    <!-- App Shell -->
+    <div class="app-container">
         
-        <div class="nav-links">
-            {% if user.is_authenticated %}
-            <div class="user-badge">
-                <div class="user-avatar">{{ user.username|make_list|first|upper }}</div>
-                <div class="user-info">{{ user.username }} <span style="color:var(--text-muted);font-weight:400;margin-left:4px;">(Lvl 4)</span></div>
+        <!-- Collapsible Icon-Rail Sidebar -->
+        <nav class="sidebar">
+            <div class="brand-header">
+                <div class="brand-icon">T</div>
+                <div class="font-heading text-xl text-cyan tracking-widest font-bold whitespace-nowrap opacity-0 transition-opacity duration-300" style="transition-delay: 0.1s;">TRINETRA</div>
             </div>
-            <a href="{% url 'officer_logout' %}" class="btn-action">
-                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                    <polyline points="16 17 21 12 16 7"></polyline>
-                    <line x1="21" y1="12" x2="9" y2="12"></line>
-                </svg>
-                Logout
+
+            <a href="{% url 'officer_dashboard' %}" class="sidebar-item {% if request.resolver_match.url_name == 'officer_dashboard' %}active{% endif %}">
+                <i data-lucide="layout-dashboard" class="sidebar-icon"></i>
+                <span class="sidebar-label">Command</span>
+            </a>
+            <a href="{% url 'cases' %}" class="sidebar-item {% if request.resolver_match.url_name == 'cases' %}active{% endif %}">
+                <i data-lucide="briefcase" class="sidebar-icon"></i>
+                <span class="sidebar-label">Cases</span>
+            </a>
+            <a href="{% url 'evidence' %}" class="sidebar-item {% if request.resolver_match.url_name == 'evidence' %}active{% endif %}">
+                <i data-lucide="database" class="sidebar-icon"></i>
+                <span class="sidebar-label">Evidence</span>
+            </a>
+            <a href="{% url 'ai_lab' %}" class="sidebar-item {% if request.resolver_match.url_name == 'ai_lab' %}active{% endif %}">
+                <i data-lucide="cpu" class="sidebar-icon"></i>
+                <span class="sidebar-label">AI Node</span>
+            </a>
+            <a href="{% url 'audit_logs' %}" class="sidebar-item {% if request.resolver_match.url_name == 'audit_logs' %}active{% endif %}">
+                <i data-lucide="shield-alert" class="sidebar-icon"></i>
+                <span class="sidebar-label">Audit Logs</span>
+            </a>
+            <a href="{% url 'settings' %}" class="sidebar-item {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
+                <i data-lucide="settings" class="sidebar-icon"></i>
+                <span class="sidebar-label">Settings</span>
+            </a>
+            
+            {% if user.is_authenticated %}
+            <a href="{% url 'officer_logout' %}" class="sidebar-item" style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05); color: var(--clr-red);">
+                <i data-lucide="power" class="sidebar-icon"></i>
+                <span class="sidebar-label">Disconnect</span>
             </a>
             {% endif %}
+
+            <!-- Binary/Hex Stream at bottom -->
+            <div class="hex-stream" id="hexStream">
+                <!-- Injected via JS -->
+            </div>
+        </nav>
+
+        <!-- Main Workspace -->
+        <main class="main-content">
+            <!-- Top Status Bar Info -->
+            <header class="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
+                <div>
+                    <h2 class="text-2xl font-heading text-cyan glitch-hover uppercase tracking-widest">{% block page_title %}Overview{% endblock %}</h2>
+                </div>
+                <div class="flex items-center gap-6">
+                    <div class="font-mono text-xs text-muted">
+                        <span class="text-cyan">SESSION:</span> <span id="nav-session-timer" data-seconds="{{ session_expiry_seconds|default:1800 }}">--:--</span>
+                    </div>
+                    {% if user.is_authenticated %}
+                    <div class="flex items-center gap-3">
+                        <div class="text-right">
+                            <div class="text-sm font-heading tracking-widest text-white">{{ user.username }}</div>
+                            <div class="text-xs font-mono text-amber">LVL 4 COMMAND</div>
+                        </div>
+                        <div class="w-10 h-10 rounded bg-cyan/10 border border-cyan/30 flex items-center justify-center text-cyan">
+                            <i data-lucide="shield"></i>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </header>
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Command Palette Overlay -->
+    <div id="cmd-palette">
+        <div class="w-full max-w-2xl">
+            <input type="text" id="cmd-input" class="w-full bg-black/50 border border-cyan/30 rounded px-6 py-4 text-xl font-mono text-cyan outline-none focus:border-cyan focus:shadow-[0_0_20px_rgba(0,240,255,0.3)] transition-all" placeholder="Enter command or search... (Cmd+K to close)" autocomplete="off">
+            <div class="mt-4 bg-black/60 border border-white/10 rounded overflow-hidden" id="cmd-results">
+                <!-- Results populated by terminal.js -->
+            </div>
         </div>
     </div>
 
-    <div class="main-container">
-        {% block content %}{% endblock %}
-    </div>
-
-    {% block extra_js %}{% endblock %}
+    <!-- Initialize Icons -->
     <script>
-        // Smooth out the page load with our global loader
-        window.addEventListener('load', function() {
-            const loader = document.getElementById('global-loader');
-            if (loader) {
-                // Minimum loading time so the aesthetic is visible 
-                setTimeout(() => {
-                    loader.style.opacity = '0';
-                    loader.style.visibility = 'hidden';
-                }, 500);
+        lucide.createIcons();
+        
+        // Hex Stream Generator
+        const hexStream = document.getElementById('hexStream');
+        setInterval(() => {
+            let stream = '';
+            for(let i=0; i<40; i++) {
+                stream += Math.floor(Math.random() * 16).toString(16).toUpperCase() + ' ';
             }
-        });
+            hexStream.innerText = stream;
+        }, 200);
     </script>
-</body>
 
+    <!-- Core Scripts -->
+    <script src="{% static 'js/canvas.js' %}"></script>
+    <script src="{% static 'js/trinetra.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+
+</body>
 </html>

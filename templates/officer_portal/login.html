@@ -1,361 +1,311 @@
 {% extends 'officer_portal/base.html' %}
+{% load static %}
 
-{% block title %}Trinetra - Secure Authentication{% endblock %}
+{% block title %}TRINETRA | RESTRICTED ACCESS{% endblock %}
 
 {% block content %}
 <style>
     /* Full height centering override for main-container */
-    .main-container {
+    .app-container {
         justify-content: center;
-        padding-bottom: 100px;
+        align-items: center;
+    }
+    
+    .sidebar { display: none; }
+    .main-content > header { display: none; }
+    
+    /* Hex Grid Background */
+    .hex-bg {
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        z-index: 1;
+        opacity: 0.04;
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='103.923' viewBox='0 0 60 103.923' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 17.32v34.64L30 69.28 0 51.96V17.32zM30 34.64l30 17.32v34.64L30 103.92 0 86.6V51.96z' fill='none' stroke='%2300F0FF' stroke-width='1'/%3E%3C/svg%3E");
+        background-size: 60px 103.923px;
+        animation: panHex 20s linear infinite;
+        pointer-events: none;
     }
 
+    @keyframes panHex {
+        0% { background-position: 0 0; }
+        100% { background-position: 60px 103.923px; }
+    }
+
+    /* Boot Sequence */
+    #boot-sequence {
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: var(--clr-bg);
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 4rem;
+        font-family: var(--font-data);
+        color: var(--clr-green);
+        transition: opacity 0.5s ease;
+    }
+
+    .boot-line {
+        opacity: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Login Form Container */
     .login-wrapper {
         position: relative;
-        perspective: 1000px;
         z-index: 10;
-        animation: floatIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        width: 100%;
+        max-width: 480px;
+        opacity: 0; /* Hidden initially, shown after boot */
+        transform: translateY(20px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+        margin: 0 auto;
     }
 
-    @keyframes floatIn {
-        0% { opacity: 0; transform: translateY(60px) rotateX(10deg); filter: blur(10px); }
-        100% { opacity: 1; transform: translateY(0) rotateX(0deg); filter: blur(0); }
+    .login-wrapper.visible {
+        opacity: 1;
+        transform: translateY(0);
     }
 
-    .login-glass-card {
-        background: rgba(12, 16, 26, 0.7);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 24px;
-        padding: 50px 40px;
-        width: 440px;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    /* Form Inputs */
+    .cyber-input-group {
         position: relative;
-        overflow: hidden;
-    }
-
-    /* Ambient card glow */
-    .login-glass-card::before {
-        content: '';
-        position: absolute;
-        top: -50%; left: -50%;
-        width: 200%; height: 200%;
-        background: radial-gradient(circle at 50% 0%, rgba(0, 229, 255, 0.15), transparent 60%);
-        pointer-events: none;
-        z-index: -1;
+        margin-bottom: 1.5rem;
     }
     
-    .card-header {
-        text-align: center;
-        margin-bottom: 40px;
-    }
-
-    .shield-icon {
-        width: 64px;
-        height: 64px;
-        margin: 0 auto 20px;
-        position: relative;
-    }
-
-    .shield-icon svg {
+    .cyber-input {
         width: 100%;
-        height: 100%;
-        fill: none;
-        stroke: var(--neon-blue);
-        stroke-width: 1.5;
-        filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.5));
-    }
-
-    .box-title {
-        font-family: var(--font-ui);
-        font-weight: 700;
-        font-size: 28px;
-        color: white;
-        letter-spacing: 1px;
-    }
-    
-    .box-subtitle {
-        font-family: var(--font-code);
-        color: var(--text-muted);
-        font-size: 13px;
-        margin-top: 8px;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-    }
-
-    .form-group {
-        margin-bottom: 24px;
-        position: relative;
-    }
-
-    .form-label {
-        font-family: var(--font-code);
-        color: var(--text-muted);
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 8px;
-        display: block;
-        transition: var(--transition-smooth);
-    }
-
-    .input-wrapper {
-        position: relative;
-        display: flex;
-        align-items: center;
-    }
-
-    .input-icon {
-        position: absolute;
-        left: 16px;
-        width: 20px;
-        height: 20px;
-        stroke: var(--text-dim);
-        fill: none;
-        stroke-width: 2;
-        transition: var(--transition-smooth);
-    }
-
-    .form-input {
-        width: 100%;
-        padding: 16px 16px 16px 48px;
-        background: rgba(0, 0, 0, 0.4);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        color: white;
-        font-family: var(--font-code);
-        font-size: 15px;
-        transition: var(--transition-bounce);
+        background: rgba(0,0,0,0.4);
+        border: 1px solid var(--clr-border);
+        padding: 1rem 1rem 1rem 3rem;
+        color: var(--clr-text);
+        font-family: var(--font-data);
         outline: none;
+        transition: all 0.3s ease;
     }
 
-    .form-input:focus {
-        border-color: var(--neon-blue);
-        background: rgba(0, 229, 255, 0.03);
-        box-shadow: 0 0 0 4px rgba(0, 229, 255, 0.1);
-        transform: translateY(-2px);
+    .cyber-input:focus {
+        border-color: var(--clr-cyan);
+        box-shadow: inset 0 0 10px rgba(0,240,255,0.1);
     }
 
-    .form-input:focus + .input-icon {
-        stroke: var(--neon-blue);
-    }
-
-    .btn-login {
-        width: 100%;
-        background: linear-gradient(135deg, var(--neon-blue), #0077ff);
-        color: #000;
-        border: none;
-        border-radius: 12px;
-        padding: 18px;
-        font-family: var(--font-ui);
-        font-weight: 700;
-        font-size: 16px;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        cursor: pointer;
-        transition: var(--transition-bounce);
-        margin-top: 10px;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 10px 20px rgba(0, 229, 255, 0.2);
-    }
-
-    .btn-login:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 15px 30px rgba(0, 229, 255, 0.4);
-    }
-
-    .btn-login::after {
-        content: '';
+    .cyber-input-icon {
         position: absolute;
-        top: 0; left: -100%; width: 50%; height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-        transform: skewX(-20deg);
-        transition: 0.5s;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--clr-muted);
+        transition: color 0.3s ease;
     }
 
-    .btn-login:hover::after {
-        left: 150%;
+    .cyber-input:focus + .cyber-input-icon {
+        color: var(--clr-cyan);
     }
 
-    .biometric-wrapper {
-        margin-top: 30px;
-        text-align: center;
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
-        padding-top: 30px;
+    /* Denied State overrides */
+    .state-denied {
+        border-color: var(--clr-red) !important;
+        box-shadow: 0 0 30px rgba(255,45,85,0.4) !important;
     }
 
-    .btn-biometric {
-        background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        border-radius: 12px;
-        color: var(--text-main);
-        padding: 14px 24px;
-        font-family: var(--font-ui);
-        font-weight: 600;
-        font-size: 14px;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 12px;
-        transition: var(--transition-smooth);
+    .typewriter-cursor {
+        display: inline-block;
+        width: 8px;
+        height: 1.2em;
+        background: var(--clr-cyan);
+        animation: blink 1s step-end infinite;
+        vertical-align: middle;
+        margin-left: 4px;
     }
 
-    .btn-biometric svg {
-        width: 20px;
-        height: 20px;
-        fill: none;
-        stroke: var(--neon-purple);
-        stroke-width: 2;
-        transition: var(--transition-smooth);
-    }
-
-    .btn-biometric:hover {
-        background: rgba(179, 0, 255, 0.05);
-        border-color: var(--neon-purple);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(179, 0, 255, 0.2);
-    }
-    
-    .btn-biometric:hover svg {
-        filter: drop-shadow(0 0 8px var(--neon-purple));
-    }
+    @keyframes blink { 50% { opacity: 0; } }
 </style>
 
-<div class="login-wrapper">
-    <div class="login-glass-card">
+<div class="hex-bg"></div>
+
+<div id="boot-sequence">
+    <div class="max-w-2xl mx-auto w-full">
+        <div class="boot-line">> INITIALIZING TRINETRA CORE... <span class="float-right">[OK]</span></div>
+        <div class="boot-line">> LOADING ENCRYPTION MODULES... <span class="float-right">[OK]</span></div>
+        <div class="boot-line">> ESTABLISHING NEURAL PATHWAYS... <span class="float-right">[OK]</span></div>
+        <div class="boot-line">> VERIFYING CLEARANCE DATABASE... <span class="float-right">[OK]</span></div>
+    </div>
+</div>
+
+<div class="login-wrapper w-full" id="login-container">
+    <div class="card-glass p-10 {% if IP_BLOCKED %}state-denied{% endif %}">
         
-        <div class="card-header">
-            <div class="shield-icon">
-                <svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round">
+        <div class="text-center mb-10">
+            <div class="w-16 h-16 mx-auto mb-6 relative">
+                <svg viewBox="0 0 24 24" class="w-full h-full fill-none stroke-[1.5] {% if IP_BLOCKED %}stroke-red-500 drop-shadow-[0_0_10px_rgba(255,45,85,0.5)]{% else %}stroke-cyan drop-shadow-[0_0_10px_rgba(0,240,255,0.5)]{% endif %}">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                     <path d="M12 8v4"></path>
                     <path d="M12 16h.01"></path>
                 </svg>
             </div>
-            <div class="box-title">Officer Protocol</div>
-            <div class="box-subtitle">Restricted Access Module</div>
+            {% if IP_BLOCKED %}
+            <h1 class="text-3xl font-heading text-red glitch-hover uppercase tracking-widest mb-2" data-text="ACCESS DENIED">ACCESS DENIED</h1>
+            <div class="font-mono text-red text-sm tracking-widest">IP [{{ client_ip|default:"UNKNOWN" }}] NOT AUTHORIZED</div>
+            {% else %}
+            <h1 class="text-3xl font-heading text-white uppercase tracking-widest mb-2">Officer Protocol</h1>
+            <div class="font-mono text-cyan text-xs tracking-widest h-4" id="typewriter-text"></div>
+            {% endif %}
         </div>
 
-        <form method="post">
+        <form method="post" id="login-form">
             {% csrf_token %}
-            <div class="form-group">
-                <label class="form-label">Identification</label>
-                <div class="input-wrapper">
-                    <input type="text" name="username" class="form-input" placeholder="OFF-XXXX-XX" autocomplete="off" required>
-                    <svg class="input-icon" viewBox="0 0 24 24">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
+            <input type="hidden" name="device_fingerprint" id="device_fingerprint">
+            <input type="text" name="username2" style="display:none" autocomplete="off"> <!-- Honeypot -->
+
+            <div class="cyber-input-group">
+                <label class="block font-mono text-muted text-xs tracking-widest mb-2">IDENTIFICATION</label>
+                <div class="relative">
+                    <input type="text" name="username" class="cyber-input" placeholder="OFF-XXXX-XX" autocomplete="off" required {% if IP_BLOCKED %}disabled{% endif %}>
+                    <i data-lucide="user" class="cyber-input-icon w-5 h-5"></i>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Encryption Key</label>
-                <div class="input-wrapper">
-                    <input type="password" name="password" class="form-input" placeholder="••••••••" required>
-                    <svg class="input-icon" viewBox="0 0 24 24">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                    </svg>
+            <div class="cyber-input-group">
+                <label class="block font-mono text-muted text-xs tracking-widest mb-2">ENCRYPTION KEY</label>
+                <div class="relative">
+                    <input type="password" name="password" class="cyber-input" placeholder="••••••••" required {% if IP_BLOCKED %}disabled{% endif %}>
+                    <i data-lucide="key" class="cyber-input-icon w-5 h-5"></i>
                 </div>
             </div>
 
-            <button type="submit" class="btn-login">Initialize Connection</button>
-
-            <div class="biometric-wrapper">
-                <button type="button" class="btn-biometric" onclick="startBiometricLogin()">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10-4.48 10-10 10S2 17.52 2 12z"></path>
-                        <path d="M9 12c0-1.66 1.34-3 3-3s3 1.34 3 3"></path>
-                        <path d="M6.34 8.34A8 8 0 0 1 12 6a8 8 0 0 1 5.66 2.34"></path>
-                        <path d="M17.66 15.66A8 8 0 0 1 12 18a8 8 0 0 1-5.66-2.34"></path>
-                    </svg>
-                    Biometric Override
+            {% if IP_BLOCKED %}
+            <button type="button" class="w-full mt-6 py-4 bg-red/20 text-red border border-red font-heading tracking-widest uppercase cursor-not-allowed" disabled>
+                BLACKLISTED TERMINAL
+            </button>
+            {% elif request.session.lockout_until %}
+            <div class="w-full mt-6 py-4 border border-red text-center">
+                <div class="font-mono text-red text-sm mb-1">ACCOUNT LOCKED</div>
+                <div class="font-mono text-white text-lg tracking-widest countdown" data-until="{{ request.session.lockout_until }}">--:--</div>
+            </div>
+            {% else %}
+            <button type="submit" class="w-full btn-cyber mt-6 py-4 text-lg">
+                Initialize Connection
+            </button>
+            
+            <div class="mt-8 text-center border-t border-white/5 pt-6">
+                <button type="button" class="inline-flex items-center gap-2 text-muted hover:text-purple text-xs font-mono tracking-widest transition-colors" onclick="startBiometricLogin()">
+                    <i data-lucide="fingerprint" class="w-4 h-4"></i> BIOMETRIC / TOTP OVERRIDE
                 </button>
             </div>
+            {% endif %}
+
         </form>
     </div>
 </div>
 
 <script>
-    async function startBiometricLogin() {
-        const usernameInput = document.querySelector('input[name="username"]');
-        const username = usernameInput ? usernameInput.value : '';
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-        try {
-            const resp = await fetch('/auth/api/biometric/options/', {
-                method: 'POST',
-                body: JSON.stringify({ username: username }),
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken
-                }
-            });
-            const options = await resp.json();
-
-            options.challenge = Uint8Array.from(atob(options.challenge), c => c.charCodeAt(0));
-            options.allowCredentials.forEach(cred => {
-                cred.id = Uint8Array.from(atob(cred.id), c => c.charCodeAt(0));
-            });
-
-            const credential = await navigator.credentials.get({ publicKey: options });
-
-            const attestation = {
-                id: credential.id,
-                response: {
-                    clientDataJSON: arrayBufferToBase64(credential.response.clientDataJSON),
-                    authenticatorData: arrayBufferToBase64(credential.response.authenticatorData),
-                    signature: arrayBufferToBase64(credential.response.signature),
-                    userHandle: credential.response.userHandle ? arrayBufferToBase64(credential.response.userHandle) : null
-                }
-            };
-
-            const verifyResp = await fetch('/auth/api/biometric/verify/', {
-                method: 'POST',
-                body: JSON.stringify(attestation),
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken
-                }
-            });
-
-            const result = await verifyResp.json();
-            if (result.status === 'ok') {
-                window.location.href = result.redirect_url;
-            } else {
-                alert('Authentication Failed: ' + result.error);
-            }
-
-        } catch (e) {
-            console.error(e);
-            alert('Biometric Login Error. See console.');
-        }
-    }
-
-    function arrayBufferToBase64(buffer) {
-        let binary = '';
-        const bytes = new Uint8Array(buffer);
-        const len = bytes.byteLength;
-        for (let i = 0; i < len; i++) {
-            binary += String.fromCharCode(bytes[i]);
-        }
-        return window.btoa(binary);
-    }
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Boot Sequence
+    const bootLines = document.querySelectorAll('.boot-line');
+    const bootContainer = document.getElementById('boot-sequence');
+    const loginContainer = document.getElementById('login-container');
     
-    // Add loading animation to submit button
-    document.querySelector('form').addEventListener('submit', function() {
-        const btn = document.querySelector('.btn-login');
-        btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 1s linear infinite; margin-right: 10px; display: inline-block; vertical-align: text-bottom;"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg> AUTHENTICATING...`;
+    // Check if we should skip boot (e.g. reload after failed login)
+    const hasBooted = sessionStorage.getItem('hasBooted');
+    
+    if (hasBooted && !{{ IP_BLOCKED|yesno:"true,false" }}) {
+        bootContainer.style.display = 'none';
+        showLogin();
+    } else {
+        sessionStorage.setItem('hasBooted', 'true');
+        let delay = 300;
+        bootLines.forEach((line, index) => {
+            setTimeout(() => {
+                line.style.opacity = '1';
+            }, delay);
+            delay += 400;
+        });
+
+        setTimeout(() => {
+            bootContainer.style.opacity = '0';
+            setTimeout(() => {
+                bootContainer.style.display = 'none';
+                showLogin();
+            }, 500);
+        }, delay + 500);
+    }
+
+    function showLogin() {
+        loginContainer.classList.add('visible');
+        
+        // 2. Typewriter Effect
+        {% if not IP_BLOCKED %}
+        const text = "RESTRICTED ACCESS MODULE";
+        const el = document.getElementById('typewriter-text');
+        let i = 0;
+        
+        // Add cursor initially
+        el.innerHTML = '<span class="typewriter-cursor"></span>';
+        
+        setTimeout(() => {
+            const interval = setInterval(() => {
+                el.innerHTML = text.substring(0, i) + '<span class="typewriter-cursor"></span>';
+                i++;
+                if (i > text.length) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        el.innerHTML = text; // remove cursor after 1s
+                    }, 1000);
+                }
+            }, 60);
+        }, 300);
+        {% endif %}
+    }
+
+    // 3. Device Fingerprinting
+    async function generateFingerprint() {
+        const str = [
+            navigator.userAgent,
+            window.screen.width + 'x' + window.screen.height,
+            Intl.DateTimeFormat().resolvedOptions().timeZone,
+            // Simple canvas fingerprint
+            (() => {
+                const c = document.createElement('canvas');
+                const ctx = c.getContext('2d');
+                ctx.textBaseline = "top";
+                ctx.font = "14px 'Arial'";
+                ctx.fillStyle = "#f60";
+                ctx.fillRect(125,1,62,20);
+                ctx.fillStyle = "#069";
+                ctx.fillText("Trinetra", 2, 15);
+                ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
+                ctx.fillText("Trinetra", 4, 17);
+                return c.toDataURL();
+            })()
+        ].join('|');
+
+        const msgBuffer = new TextEncoder().encode(str);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        {% if not IP_BLOCKED %}
+        e.preventDefault();
+        const fpInput = document.getElementById('device_fingerprint');
+        fpInput.value = await generateFingerprint();
+        
+        const btn = document.querySelector('.btn-cyber');
+        btn.innerHTML = `<i data-lucide="loader" class="w-5 h-5 animate-spin mx-auto"></i>`;
+        lucide.createIcons();
         btn.style.opacity = '0.8';
         btn.style.pointerEvents = 'none';
-        btn.style.transform = 'scale(0.98)';
-        btn.style.boxShadow = 'none';
+        
+        e.target.submit();
+        {% endif %}
     });
+});
+
+function startBiometricLogin() {
+    alert("SYSTEM: Initializing biometric/TOTP handshake... (Simulated)");
+    // Here we would typically trigger WebAuthn or a TOTP modal
+}
 </script>
-<style>
-    @keyframes spin { 100% { transform: rotate(360deg); } }
-</style>
 {% endblock %}

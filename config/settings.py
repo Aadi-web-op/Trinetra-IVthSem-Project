@@ -55,6 +55,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'config.context_processors.trinetra_context',
             ],
         },
     },
@@ -151,7 +152,7 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 # Production Toggles
-DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
 if not DEBUG:
     SECURE_SSL_REDIRECT = True

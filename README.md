@@ -2,93 +2,104 @@
 
 > **"Eyes of the Law, Mind of a Machine."**
 
-Trinetra is a cutting-edge **Intelligence Officer Portal** designed for high-security clearance operations. It integrates **Generative AI** for log analysis and legal drafting with a futuristic **Cyberpunk/Glassmorphism UI**.
+Trinetra is a sophisticated **Intelligence Officer Portal** developed as a 2nd-year academic project. It serves as a modern command center for managing cyber cases, analyzing evidence logs, and auto-generating legal drafts. The platform integrates **Generative AI** directly into an officer's workflow, all wrapped in a highly responsive, futuristic **Cyberpunk/Glassmorphism UI**.
 
 ---
 
-## 🚀 Key Features
+## 📖 What is this project about?
 
-### 1. 🧠 Intelligence Lab (AI Node)
-- **Universal File Analyzer**: Upload logs, code, or documents for instant AI analysis.
-- **Legal Auto-Drafter**: Generates professional PDF legal opinions based on case facts.
-- **Hybrid Engine**: Connects to **Hugging Face Spaces** for heavy lifting, with local fallbacks.
+Trinetra is built to simulate a high-security intelligence and case management system. The primary goal is to empower officers with AI tools to speed up their investigation and legal drafting process. 
 
-### 2. 🛡️ Advanced Security
-- **Iron Dome Upgrade**: Certificate-based binding and IP-locking middleware (Configurable).
-- **Biometric Logic**: Ready for WebAuthn (Fingerprint/FaceID) integration.
-- **Role-Based Access**: Strict separation between Commanders (Admins) and Field Officers.
-
-### 3. 💻 Future-Ready UI
-- **Glassmorphism**: Translucent panels, neon accents, and blurs.
-- **Reactive Dashboard**: Real-time threat levels and case tracking.
-- **Responsive**: Fully functional on tactical tablets and desktop command centers.
+A first-time user (or officer) logs into the portal and can:
+1. **Manage Cases & Evidence:** Create case files, track suspects, and upload evidence documents.
+2. **Consult the AI Lab:** Use a built-in AI chat interface to analyze uploaded log files, parse raw text, or get quick insights on a case.
+3. **Generate Legal Drafts:** Input case facts and generate professional, formatted legal PDF opinions instantly using AI.
+4. **Command Center (Admin):** Higher-ranking officials have access to an admin dashboard with strict role-based access, audit logging, and security monitoring.
 
 ---
 
-## 🛠️ Technology Stack
+## 🛠️ How is it made? (Tech Stack)
+
+The project is structured as a monolithic web application utilizing modern frontend aesthetics without relying on heavy JavaScript frameworks like React.
 
 | Component | Technology | Description |
 | :--- | :--- | :--- |
-| **Backend** | Python 3.11 + Django 5.0 | Core logic and ORM |
-| **Database** | PostgreSQL (Neon DB) | Cloud-native serverless SQL |
-| **AI Engine** | Gradio Client + Hugging Face | Interface for LLM operations |
-| **Frontend** | HTML5 + Tailwind + Vanilla JS | Lightweight, high-performance UI |
-| **Deployment**| Azure App Service | Enterprise-grade hosting |
+| **Backend Framework** | Python 3.11 + Django 5.0 | Handles all routing, core logic, and ORM. |
+| **Database** | SQLite (Local) / PostgreSQL (NeonDB) | Stores cases, evidence, chat history, and audit logs. |
+| **AI Integration** | Hugging Face (Gradio Client) | Connects to external Hugging Face Spaces for heavy LLM lifting, keeping the local app lightweight. |
+| **Frontend UI** | HTML5, Tailwind CSS, Vanilla JS | Delivers the sleek "Glassmorphism" design with translucent panels, neon accents, and smooth animations. |
+| **Icons & Fonts** | Lucide Icons, Google Fonts (Inter) | Provides the clean, modern aesthetic. |
+
+---
+
+## 📂 Project Structure
+
+The Django project is divided into several modular apps:
+- **`officer_portal/`**: The heart of the app. Contains the AI chat interface, case/evidence management, and PDF generation logic.
+- **`authentication/`**: Handles secure user login, biometric logic placeholders, and session management.
+- **`access_control/`**: Manages Role-Based Access Control (RBAC) ensuring strict separation between standard Officers and Commanders (Admins).
+- **`audit_logs/`**: Tracks and records sensitive actions taken on the platform.
+- **`config/`**: The core Django settings, including security middleware ("Iron Dome") and database routing.
 
 ---
 
 ## ⚙️ Setup & Installation
 
-### Prerequisites
-- Python 3.11+
+Follow these steps to run the project locally.
+
+### 1. Prerequisites
+- Python 3.10+
 - Git
 
-### 1. Local Development
-```bash
+### 2. Clone and Setup
+```powershell
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/TRINETRA_REPO.git
-cd Trinetra_Root
+git clone <repository-url>
+cd Trinetra-IVthSem-Project/Trinetra-IVthSem-Project
+
+# Create a virtual environment
+python -m venv .venv
+
+# Activate the virtual environment
+# On Windows:
+.\.venv\Scripts\activate
+# On Mac/Linux:
+source .venv/bin/activate
 
 # Install Dependencies
 pip install -r requirements.txt
+```
 
-# Create .env file (See deployment_guide.md for keys)
-# Run Migrations
+### 3. Environment Variables
+To use the AI features, you need a Hugging Face API Token.
+Create a `.env` file in the same folder as `manage.py` and add:
+```env
+HF_API_TOKEN=your_huggingface_token_here
+DEBUG=True
+```
+
+### 4. Database Setup & Run
+```powershell
+# Run Migrations to setup the database
 python manage.py migrate
 
-# Create Superuser (Admin)
+# Create a Superuser (Admin account)
 python manage.py createsuperuser
 
-# Start Server
+# Start the Development Server
 python manage.py runserver
 ```
 
-### 2. Azure Deployment
-This project is **Cloud-Ready**.
-- **Startup Script**: `startup.sh` includes migration and user creation.
-- **Database**: Configured for `DATABASE_URL` (Postgres).
-- **Static Files**: Served via `WhiteNoise`.
-
-👉 **[Read the Deployment Guide](deployment_guide.md)** for full Azure commands.
+Once the server is running, visit **[http://localhost:8000/](http://localhost:8000/)** in your browser to access the portal!
 
 ---
 
-## 🔐 Security Protocols (Config)
+## 🔐 Security Protocols (Iron Dome)
 
-The system runs in **Prototyping Mode** by default for ease of testing.
-
-- **Enable Iron Dome**: Set `TRINETRA_STRICT_FIREWALL = True` in `config/settings.py`.
-- **IP Allowlist**: Configure `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` in production.
-
----
-
-## 🤝 Contribution
-1. Fork the repository.
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`).
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-4. Push to the branch (`git push origin feature/AmazingFeature`).
-5. Open a Pull Request.
+The system includes custom middleware (`IPFortressMiddleware`) for enhanced security.
+- By default, in local development (`DEBUG=True`), strict SSL redirects and IP-locking are bypassed.
+- In production (`DEBUG=False`), the system enforces HTTPS, sets secure cookies, and restricts access based on `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS`.
 
 ---
-**Verified By:** Trinetra Command Command
+**Verified By:** Trinetra Command Center  
 **Clearance Level:** TOP SECRET // NOFORN

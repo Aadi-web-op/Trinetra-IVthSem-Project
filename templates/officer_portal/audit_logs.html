@@ -1,0 +1,83 @@
+{% extends 'officer_portal/base.html' %}
+{% load static %}
+
+{% block title %}TRINETRA - Audit Logs{% endblock %}
+{% block page_title %}System Telemetry{% endblock %}
+
+{% block extra_css %}
+<style>
+    .log-stream {
+        font-family: var(--font-mono);
+        font-size: 13px;
+        line-height: 1.6;
+        height: calc(100vh - 250px);
+        overflow-y: auto;
+        padding: 1rem;
+    }
+    
+    .log-entry {
+        border-left: 2px solid transparent;
+        padding-left: 10px;
+        margin-bottom: 8px;
+        transition: background 0.2s;
+    }
+    
+    .log-entry:hover {
+        background: rgba(255,255,255,0.02);
+    }
+    
+    .log-LOGIN { border-color: var(--clr-green); color: var(--clr-green); }
+    .log-FAIL { border-color: var(--clr-amber); color: var(--clr-amber); }
+    .log-BREACH { border-color: var(--clr-red); color: var(--clr-red); }
+    .log-TRAP { border-color: var(--clr-purple); color: var(--clr-purple); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in duration-500 h-full">
+    
+    <!-- Left: Immutable Logs -->
+    <div class="lg:col-span-2 card-glass flex flex-col">
+        <div class="p-4 border-b border-white/5 flex justify-between items-center bg-black/40">
+            <div class="font-heading tracking-widest text-cyan uppercase"><i data-lucide="shield-check" class="w-4 h-4 inline mr-2"></i> Immutable Access Registry</div>
+            <div class="flex items-center gap-2 text-xs font-mono">
+                <span class="flex items-center text-green"><span class="w-2 h-2 rounded-full bg-green animate-pulse mr-1"></span> LIVE</span>
+            </div>
+        </div>
+        
+        <div class="log-stream bg-black/60">
+            {% for log in system_logs %}
+            <div class="log-entry log-{{ log.action }}">
+                <span class="text-muted">[{{ log.timestamp|date:"Y-m-d H:i:s.u"|slice:":23" }}]</span>
+                <span class="font-bold">[{{ log.action }}]</span>
+                <span class="text-white">USER: {{ log.actor.username|default:"UNKNOWN" }}</span>
+                <span class="text-muted ml-2">IP: {{ log.ip }}</span>
+            </div>
+            {% empty %}
+            <div class="text-muted py-4">SYSTEM: No immutable access logs found in current scope.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Right: Trap Logs -->
+    <div class="card-glass flex flex-col border-red/30">
+        <div class="p-4 border-b border-red/30 flex justify-between items-center bg-red/10">
+            <div class="font-heading tracking-widest text-red uppercase"><i data-lucide="crosshair" class="w-4 h-4 inline mr-2"></i> Intrusion Trap Data</div>
+        </div>
+        
+        <div class="log-stream bg-black/80">
+            {% for trap in trap_logs %}
+            <div class="log-entry log-TRAP mb-4 p-2 bg-purple/5 border border-purple/20">
+                <div class="text-xs text-muted mb-1">[{{ trap.timestamp|date:"Y-m-d H:i:s" }}]</div>
+                <div class="text-white font-bold mb-1">TARGET: <span class="text-cyan">{{ trap.attempted_username }}</span></div>
+                <div class="text-purple">IP: {{ trap.ip_address }}</div>
+                <div class="text-[10px] text-muted mt-2 break-words">{{ trap.user_agent|slice:":100" }}...</div>
+            </div>
+            {% empty %}
+            <div class="text-muted py-4">SYSTEM: No intrusion attempts detected.</div>
+            {% endfor %}
+        </div>
+    </div>
+    
+</div>
+{% endblock %}

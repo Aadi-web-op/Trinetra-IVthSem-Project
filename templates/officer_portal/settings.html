@@ -1,0 +1,81 @@
+{% extends 'officer_portal/base.html' %}
+{% load static %}
+
+{% block title %}TRINETRA - System Settings{% endblock %}
+{% block page_title %}Command Preferences{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500 pb-10">
+    
+    <!-- Module 1 -->
+    <div class="card-glass">
+        <div class="p-6 border-b border-white/5 flex items-center gap-3">
+            <i data-lucide="shield" class="w-6 h-6 text-cyan"></i>
+            <div>
+                <h3 class="font-heading text-lg text-white tracking-widest uppercase">Security & Access</h3>
+                <p class="text-xs text-muted font-mono">Manage terminal authorization parameters</p>
+            </div>
+        </div>
+        <div class="p-6 space-y-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-sm text-white font-mono mb-1">STRICT FIREWALL MODE</div>
+                    <div class="text-xs text-muted">Block unverified IPs from accessing the Command Center</div>
+                </div>
+                <div class="w-12 h-6 bg-cyan/20 border border-cyan rounded-full relative cursor-pointer">
+                    <div class="absolute right-1 top-1 w-4 h-4 bg-cyan rounded-full shadow-[0_0_10px_#00F0FF]"></div>
+                </div>
+            </div>
+            <div class="h-px bg-white/5 w-full"></div>
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-sm text-white font-mono mb-1">BIOMETRIC REQUIREMENT</div>
+                    <div class="text-xs text-muted">Force hardware key or fingerprint for Level 4 actions</div>
+                </div>
+                <div class="w-12 h-6 bg-black/50 border border-white/20 rounded-full relative cursor-pointer">
+                    <div class="absolute left-1 top-1 w-4 h-4 bg-muted rounded-full"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Module 2 -->
+    <div class="card-glass">
+        <div class="p-6 border-b border-white/5 flex items-center gap-3">
+            <i data-lucide="cpu" class="w-6 h-6 text-purple"></i>
+            <div>
+                <h3 class="font-heading text-lg text-white tracking-widest uppercase">Neural Core Parameters</h3>
+                <p class="text-xs text-muted font-mono">AI logic and processing configurations</p>
+            </div>
+        </div>
+        <div class="p-6 space-y-6">
+            <div class="space-y-2">
+                <label class="text-xs font-mono text-cyan">INFERENCE TEMPERATURE</label>
+                <input type="range" min="0" max="100" value="30" class="w-full accent-purple bg-black border border-white/10 rounded-lg h-2 appearance-none cursor-pointer">
+                <div class="flex justify-between text-[10px] text-muted font-mono">
+                    <span>DETERMINISTIC</span>
+                    <span>0.3</span>
+                    <span>CREATIVE</span>
+                </div>
+            </div>
+            <div class="h-px bg-white/5 w-full"></div>
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-sm text-white font-mono mb-1">AUTO-REDACTION ENGINE</div>
+                    <div class="text-xs text-muted">Automatically mask PII in generated legal drafts</div>
+                </div>
+                <div class="w-12 h-6 bg-purple/20 border border-purple rounded-full relative cursor-pointer">
+                    <div class="absolute right-1 top-1 w-4 h-4 bg-purple rounded-full shadow-[0_0_10px_#8B5CF6]"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Save Actions -->
+    <div class="flex justify-end gap-4">
+        <button class="px-6 py-3 font-mono text-sm text-muted hover:text-white transition-colors">Discard Draft</button>
+        <button class="btn-cyber px-8 py-3 font-bold tracking-widest uppercase shadow-[0_0_20px_rgba(0,240,255,0.2)]">Apply Configuration</button>
+    </div>
+
+</div>
+{% endblock %}

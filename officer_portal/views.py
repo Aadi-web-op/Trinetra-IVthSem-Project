@@ -32,6 +32,10 @@ except ImportError:
     from audit_logs.models import ImmutableLog as AuditLog
 
 from . import ai_service
+try:
+    from access_control.models import TrapLog
+except ImportError:
+    pass
 
 logger = logging.getLogger(__name__)
 
@@ -96,9 +100,17 @@ def custom_admin_logout(request):
 
 @login_required
 def officer_dashboard(request):
-    recent_cases = Case.objects.filter(assigned_officer=request.user).order_by('-created_at')[:5]
+    recent_cases = Case.objects.filter(assigned_officer=request.user).order_by('-created_at')[:10]
+    evidences = Evidence.objects.filter(case__in=recent_cases).order_by('-uploaded_at')[:15]
+    
+    # Simple threat calculation for demo
+    threat_score = min(100, recent_cases.count() * 10 + evidences.count() * 5)
+    
     return render(request, 'officer_portal/dashboard.html', {
         'cases': recent_cases,
+        'evidences': evidences,
+        'case_count': recent_cases.count(),
+        'threat_score': threat_score,
         'user': request.user
     })
 
@@ -426,3 +438,37 @@ def factory_reset(request):
         
     except Exception as e:
         return HttpResponse(f"<h1>Error</h1><p>{str(e)}</p>", status=500)
+
+@login_required
+def cases_view(request):
+    all_cases = Case.objects.all().order_by('-created_at')
+    return render(request, 'officer_portal/cases.html', {'cases': all_cases})
+
+@login_required
+def evidence_view(request):
+    all_evidence = Evidence.objects.all().order_by('-uploaded_at')
+    return render(request, 'officer_portal/evidence.html', {'evidence': all_evidence})
+
+@login_required
+def audit_logs_view(request):
+    # Fetch audit logs (ImmutableLog) and TrapLogs
+    try:
+        from audit_logs.models import ImmutableLog
+        system_logs = ImmutableLog.objects.all().order_by('-timestamp')[:50]
+    except Exception:
+        system_logs = []
+        
+    try:
+        from access_control.models import TrapLog
+        trap_logs = TrapLog.objects.all().order_by('-timestamp')[:50]
+    except Exception:
+        trap_logs = []
+        
+    return render(request, 'officer_portal/audit_logs.html', {
+        'system_logs': system_logs,
+        'trap_logs': trap_logs
+    })
+
+@login_required
+def settings_view(request):
+    return render(request, 'officer_portal/settings.html')
