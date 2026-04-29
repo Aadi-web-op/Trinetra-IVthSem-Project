@@ -40,6 +40,7 @@ MIDDLEWARE = [
     
     # Trinetra Security Core
     'config.middleware.IPFortressMiddleware',
+    'config.middleware.ZeroTrustSessionMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'

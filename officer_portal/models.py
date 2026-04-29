@@ -68,6 +68,31 @@ class Evidence(models.Model):
     file = models.FileField(upload_to='evidence/%Y/%m/')
     description = models.TextField(blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
+    file_hash = models.CharField(max_length=64, blank=True, null=True, help_text="SHA-256 hash for integrity verification")
+
+    def save(self, *args, **kwargs):
+        if not self.file_hash and self.file:
+            import hashlib
+            sha256_hash = hashlib.sha256()
+            for chunk in self.file.chunks():
+                sha256_hash.update(chunk)
+            self.file_hash = sha256_hash.hexdigest()
+        super().save(*args, **kwargs)
+
+    def verify_integrity(self):
+        """Returns True if the file on disk matches the stored hash."""
+        if not self.file_hash or not self.file:
+            return False
+        import hashlib
+        try:
+            self.file.open('rb')
+            sha256_hash = hashlib.sha256()
+            for chunk in self.file.chunks():
+                sha256_hash.update(chunk)
+            self.file.close()
+            return sha256_hash.hexdigest() == self.file_hash
+        except Exception:
+            return False
 
     def __str__(self):
         return f"Evidence for {self.case.case_no} by {self.uploaded_by.username}"

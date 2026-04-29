@@ -9,4 +9,5 @@ requests
 gradio_client>=1.3.0
 huggingface_hub
 python-dotenv
+google-genai
 reportlab

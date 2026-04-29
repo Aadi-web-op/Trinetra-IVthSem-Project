@@ -300,6 +300,27 @@
     <!-- Core Scripts -->
     <script src="{% static 'js/canvas.js' %}"></script>
     <script src="{% static 'js/trinetra.js' %}"></script>
+    <script>
+        // Panic Protocol (Kill Switch)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'K') {
+                e.preventDefault();
+                // Send panic request
+                fetch("{% url 'panic_protocol' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    }
+                }).then(() => {
+                    window.location.href = "{% url 'system_lockdown' %}";
+                }).catch(() => {
+                    // Force redirect even if network fails
+                    window.location.href = "{% url 'system_lockdown' %}";
+                });
+            }
+        });
+    </script>
     {% block extra_js %}{% endblock %}
 
 </body>

@@ -16,3 +16,11 @@ class TrapLog(models.Model):
 
     def __str__(self):
         return f"Trap: {self.ip_address} - {self.timestamp}"
+
+class BannedIP(models.Model):
+    ip_address = models.GenericIPAddressField(unique=True)
+    banned_at = models.DateTimeField(auto_now_add=True)
+    reason = models.CharField(max_length=255, default="Honeypot Triggered")
+
+    def __str__(self):
+        return f"Banned: {self.ip_address} ({self.reason})"

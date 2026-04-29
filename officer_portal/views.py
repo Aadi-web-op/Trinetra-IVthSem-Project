@@ -61,6 +61,9 @@ def officer_login(request):
         if user is not None:
             if user.is_staff:
                 login(request, user)
+                # Zero-Trust Session Fingerprinting
+                request.session['zt_ip'] = get_client_ip(request)
+                request.session['zt_ua'] = request.META.get('HTTP_USER_AGENT', 'Unknown')
                 return redirect('officer_dashboard')
             else:
                 messages.error(request, "Access Denied: Officer Clearance Required.")
@@ -234,6 +237,20 @@ def ai_task_status(request, task_id):
 
 @login_required
 @require_POST
+def delete_chat_endpoint(request, chat_id):
+    """Deletes a specific chat message if owned by the user."""
+    try:
+        chat = ChatMessage.objects.get(id=chat_id, user=request.user)
+        chat.delete()
+        return JsonResponse({'status': 'ok'})
+    except ChatMessage.DoesNotExist:
+        return JsonResponse({'error': 'Chat not found or unauthorized'}, status=404)
+    except Exception as e:
+        logger.error(f"Delete chat error: {e}")
+        return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+@require_POST
 def authorize_ai(request):
     """
     Handles the security protocol modal to log AI usage before entering the WORMHOLE.
@@ -359,6 +376,20 @@ def generate_legal(request):
             y = 750
             p.setFont("Helvetica", 10)
             
+    # --- STEGANOGRAPHIC WATERMARK ---
+    # We place an invisible watermark (white text on white background)
+    # with the officer's ID, IP, and timestamp at the bottom edge.
+    p.setFont("Helvetica", 6)
+    p.setFillColorRGB(1, 1, 1, alpha=0.0) # Transparent / White
+    client_ip = get_client_ip(request)
+    watermark_data = f"TRINETRA_ID:{request.user.id}|IP:{client_ip}|TIME:{datetime.now().isoformat()}"
+    p.drawString(10, 10, watermark_data)
+    
+    # Also add standard PDF metadata for secondary tracing
+    p.setAuthor(f"Trinetra Officer ID: {request.user.id}")
+    p.setTitle(f"Legal_Opinion_{case.case_no}")
+    p.setSubject(watermark_data)
+
     p.showPage()
     p.save()
     buffer.seek(0)
@@ -370,8 +401,14 @@ def generate_legal(request):
 @login_required
 def ai_lab(request):
     case_id = request.GET.get('case_id', '')
+    if case_id:
+        history = ChatMessage.objects.filter(user=request.user, case__case_no=case_id).order_by('-timestamp')[:50]
+    else:
+        history = ChatMessage.objects.filter(user=request.user, case__isnull=True).order_by('-timestamp')[:50]
+        
     context = {
-        'case_id': case_id
+        'case_id': case_id,
+        'history': history,
     }
     return render(request, 'officer_portal/ai_lab.html', context)
 @login_required
@@ -401,6 +438,33 @@ def create_case_endpoint(request):
 def officer_logout(request):
     logout(request)
     return redirect('portal_login')
+
+@require_POST
+def panic_protocol(request):
+    """
+    Kill Switch: Wipes the session instantly and logs the user out.
+    """
+    from access_control.models import TrapLog
+    import logging
+    
+    # Log the panic event if user is authenticated
+    if request.user.is_authenticated:
+        TrapLog.objects.create(
+            ip_address=get_client_ip(request),
+            attempted_username=f"PANIC_TRIGGERED_BY_{request.user.username}",
+            user_agent=request.META.get('HTTP_USER_AGENT', 'Unknown')
+        )
+        
+    logout(request)
+    # We return a JSON response so the JS can redirect to the lockdown page
+    return JsonResponse({'status': 'lockdown_initiated'})
+
+def system_lockdown(request):
+    """
+    Renders the fake system lockdown / maintenance screen.
+    """
+    return render(request, 'officer_portal/system_lockdown.html')
+
 from django.http import HttpResponse
 def factory_reset(request):
     """Temporary endpoint to wipe the DB and recreate admin from Azure."""

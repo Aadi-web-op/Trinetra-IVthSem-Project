@@ -80,6 +80,11 @@ def biometric_login_verify(request):
         # Login User
         login(request, device.user)
         
+        # Zero-Trust Session Fingerprinting
+        from access_control.utils import get_client_ip
+        request.session['zt_ip'] = get_client_ip(request)
+        request.session['zt_ua'] = request.META.get('HTTP_USER_AGENT', 'Unknown')
+        
         return JsonResponse({"status": "ok", "redirect_url": "/portal/dashboard/"})
 
     except Exception as e:

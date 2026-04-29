@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.http import HttpResponseForbidden, HttpResponseServerError, HttpResponseRedirect
 from django.shortcuts import render
-from access_control.models import AllowedStation, TrapLog
+from access_control.models import AllowedStation, TrapLog, BannedIP
 from access_control.utils import get_client_ip
 from django.utils import timezone
 from django.urls import resolve
@@ -31,7 +31,12 @@ class IPFortressMiddleware:
 
         try:
             client_ip = get_client_ip(request)
+
+            # 1. Check if IP is permanently banned (Honeypot hit)
+            if BannedIP.objects.filter(ip_address=client_ip).exists():
+                return HttpResponseForbidden("INTRUSION DETECTED. IP IS BANNED.")
             
+            # 2. Check Allowed Stations
             if AllowedStation.objects.filter(static_ip=client_ip, is_active=True).exists():
                  return self.get_response(request)
 
@@ -52,3 +57,31 @@ class IPFortressMiddleware:
         except Exception as e:
             logger.error(f"IPFortressMiddleware DB error: {e}")
             return self.get_response(request)
+
+class ZeroTrustSessionMiddleware:
+    """
+    Prevents session hijacking by binding the session to IP and User-Agent.
+    """
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if request.user.is_authenticated:
+            session_ip = request.session.get('zt_ip')
+            session_ua = request.session.get('zt_ua')
+            
+            # If these don't exist, we might be from an old session, let's set them.
+            if not session_ip or not session_ua:
+                request.session['zt_ip'] = get_client_ip(request)
+                request.session['zt_ua'] = request.META.get('HTTP_USER_AGENT', 'Unknown')
+            else:
+                current_ip = get_client_ip(request)
+                current_ua = request.META.get('HTTP_USER_AGENT', 'Unknown')
+                
+                if current_ip != session_ip or current_ua != session_ua:
+                    from django.contrib.auth import logout
+                    logger.warning(f"Session Hijack Attempt Detected. Expected: {session_ip}/{session_ua}, Got: {current_ip}/{current_ua}")
+                    logout(request)
+                    return HttpResponseForbidden("SECURITY BREACH DETECTED: SESSION INVALIDATED.")
+                    
+        return self.get_response(request)

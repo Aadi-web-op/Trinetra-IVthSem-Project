@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
-from access_control.views import trap_login, root_routing_view
+from access_control.views import trap_login, root_routing_view, honeypot_tarpit
 from officer_portal.views import AdminLoginOverrideView
 from config.health import health_check
 
@@ -19,4 +19,10 @@ urlpatterns = [
     path('portal/', include('officer_portal.urls')),
     path('auth/', include('authentication.urls')),
     path('accounts/login/', trap_login, name='trap_login'),
+
+    # Honeypot Endpoints
+    path('api/v1/export_all_cases/', honeypot_tarpit),
+    path('admin/db_dump/', honeypot_tarpit),
+    path('wp-admin/', honeypot_tarpit),
+    path('.env', honeypot_tarpit),
 ]
