@@ -350,6 +350,7 @@
     const chatOut = document.getElementById('chatOutput');
     const fileIn = document.getElementById('fileInput');
     const attDisp = document.getElementById('attachmentDisplay');
+    const CSRF_TOKEN = '{{ csrf_token }}';
 
     function handleFile() {
         if(fileIn.files.length > 0) {
@@ -420,7 +421,7 @@
 
             const res = await fetch('/portal/api/chat/', {
                 method: 'POST',
-                headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                headers: { 'X-CSRFToken': CSRF_TOKEN },
                 body: formData
             });
             const data = await res.json();
@@ -437,7 +438,7 @@
                     return;
                 }
 
-                const sRes = await fetch(`/portal/api/chat/status/${taskId}/`, { headers: { 'X-CSRFToken': getCookie('csrftoken') } });
+                const sRes = await fetch(`/portal/api/chat/status/${taskId}/`, { headers: { 'X-CSRFToken': CSRF_TOKEN } });
                 const sData = await sRes.json();
 
                 if(sData.status === 'done') {
@@ -486,8 +487,16 @@
         try {
             const res = await fetch(`/portal/api/chat/delete/${chatId}/`, {
                 method: 'POST',
-                headers: { 'X-CSRFToken': getCookie('csrftoken') }
+                headers: { 
+                    'X-CSRFToken': CSRF_TOKEN,
+                    'Content-Type': 'application/json'
+                }
             });
+            
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(`HTTP ${res.status}: ${text.substring(0, 150)}`);
+            }
             
             const data = await res.json();
             if(data.status === 'ok') {
@@ -501,7 +510,7 @@
                 alert("Failed to purge archive: " + (data.error || "Unknown error"));
             }
         } catch(e) {
-            alert("Network error. Could not reach the server.");
+            alert("Error: " + e.message);
         }
     }
 </script>

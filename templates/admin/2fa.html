@@ -244,11 +244,45 @@
     </div>
 
     <script>
-        function startBiometric() {
-            // Placeholder: In a real scenario, this would trigger WebAuthn
-            alert("Biometric Scanner Initiated... (Simulated)");
-            document.getElementById('biometric_data').value = "mock_bio_token_123";
-            document.querySelector('form').submit();
+        async function startBiometric() {
+            try {
+                const btn = document.querySelector('.btn-bio');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = 'AWAITING BIOMETRICS...';
+
+                // Trigger OS Biometric Auth via WebAuthn
+                const publicKeyCredentialCreationOptions = {
+                    challenge: new Uint8Array(32),
+                    rp: {
+                        name: "Trinetra Security Systems",
+                        id: window.location.hostname
+                    },
+                    user: {
+                        id: new Uint8Array(16),
+                        name: "admin",
+                        displayName: "Command Node"
+                    },
+                    pubKeyCredParams: [{alg: -7, type: "public-key"}],
+                    authenticatorSelection: {
+                        userVerification: "required" // Enforce Biometric/PIN
+                    },
+                    timeout: 60000
+                };
+
+                const credential = await navigator.credentials.create({
+                    publicKey: publicKeyCredentialCreationOptions
+                });
+
+                // If successful, OS biometric passed.
+                document.getElementById('biometric_data').value = "VERIFIED_HACKATHON_DEMO";
+                document.querySelector('form').submit();
+
+            } catch (e) {
+                console.error(e);
+                const btn = document.querySelector('.btn-bio');
+                btn.innerHTML = 'Use Biometric Scan';
+                alert("SYSTEM: Biometric verification failed: " + e.message + "\n\nTip: If testing locally, make sure you access the site via http://localhost:8000 instead of 127.0.0.1, as WebAuthn blocks IP addresses.");
+            }
         }
     </script>
 </body>

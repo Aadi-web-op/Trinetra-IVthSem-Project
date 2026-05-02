@@ -156,6 +156,7 @@
         <form method="post" id="login-form">
             {% csrf_token %}
             <input type="hidden" name="device_fingerprint" id="device_fingerprint">
+            <input type="hidden" name="biometric_payload" id="biometric_payload">
             <input type="text" name="username2" style="display:none" autocomplete="off"> <!-- Honeypot -->
 
             <div class="cyber-input-group">
@@ -303,9 +304,58 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-function startBiometricLogin() {
-    alert("SYSTEM: Initializing biometric/TOTP handshake... (Simulated)");
-    // Here we would typically trigger WebAuthn or a TOTP modal
+async function startBiometricLogin() {
+    try {
+        const usernameInput = document.querySelector('input[name="username"]').value;
+        if (!usernameInput) {
+            alert("SYSTEM: Please enter your IDENTIFICATION (username) before initiating biometric handshake.");
+            return;
+        }
+
+        // Trigger OS Biometric Auth via WebAuthn
+        const publicKeyCredentialCreationOptions = {
+            challenge: new Uint8Array(32),
+            rp: {
+                name: "Trinetra Security Systems",
+                id: window.location.hostname
+            },
+            user: {
+                id: new Uint8Array(16),
+                name: usernameInput,
+                displayName: "Officer Command"
+            },
+            pubKeyCredParams: [{alg: -7, type: "public-key"}],
+            authenticatorSelection: {
+                userVerification: "required" // Enforce Biometric/PIN
+            },
+            timeout: 60000
+        };
+
+        const btn = document.querySelector('.btn-cyber');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = `<i data-lucide="loader" class="w-5 h-5 animate-spin mx-auto"></i> AWAITING BIOMETRICS...`;
+        lucide.createIcons();
+
+        const credential = await navigator.credentials.create({
+            publicKey: publicKeyCredentialCreationOptions
+        });
+
+        // If successful, OS biometric passed.
+        // Submit hidden form to authenticate
+        document.getElementById('biometric_payload').value = "VERIFIED_HACKATHON_DEMO";
+        
+        // Ensure password validation doesn't block submission
+        const passInput = document.querySelector('input[name="password"]');
+        if(!passInput.value) passInput.value = "BIOMETRIC_BYPASS";
+        
+        document.getElementById('login-form').submit();
+
+    } catch (e) {
+        console.error(e);
+        const btn = document.querySelector('.btn-cyber');
+        btn.innerHTML = `Initialize Connection`;
+        alert("SYSTEM: Biometric verification failed: " + e.message + "\n\nTip: If testing locally, make sure you access the site via http://localhost:8000 instead of 127.0.0.1, as WebAuthn blocks IP addresses.");
+    }
 }
 </script>
 {% endblock %}
