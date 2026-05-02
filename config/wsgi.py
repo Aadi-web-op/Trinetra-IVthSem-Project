@@ -27,13 +27,13 @@ def run_setup():
             User.objects.create_superuser('admin', 'admin@trinetra.local', 'admin123')
             print("Admin user created successfully.")
             
-        # 3. Ensure Localhost is an AllowedStation
+        # 3. Ensure Localhost and User IP is an AllowedStation
         from access_control.models import AllowedStation
-        local_ips = ['127.0.0.1', 'localhost']
+        local_ips = ['127.0.0.1', 'localhost', '157.49.177.40']
         for ip in local_ips:
             if not AllowedStation.objects.filter(static_ip=ip).exists():
                 print(f"Adding {ip} to AllowedStation...")
-                AllowedStation.objects.create(station_name=f'Localhost-Auto-{ip}', static_ip=ip, is_active=True)
+                AllowedStation.objects.create(station_name=f'Auto-Allowed-{ip}', static_ip=ip, is_active=True)
                 
     except Exception as e:
         print(f"Auto-Setup Error: {e}")

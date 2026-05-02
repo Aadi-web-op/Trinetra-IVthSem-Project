@@ -17,7 +17,7 @@ class IPFortressMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        if request.path == '/health/':
+        if request.path in ['/', '/health/']:
             return self.get_response(request)
 
         # Allow static and media files

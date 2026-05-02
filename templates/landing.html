@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trinetra - Global Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-deep: #020204;
+            --cyan: #00f3ff;
+            --purple: #8b5cf6;
+            --red: #ff003c;
+            --font-ui: 'Rajdhani', sans-serif;
+            --font-hud: 'Orbitron', sans-serif;
+            --font-code: 'Share Tech Mono', monospace;
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--bg-deep);
+            color: #fff;
+            font-family: var(--font-ui);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Hexagon Background */
+        .hex-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 0;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='103.923' viewBox='0 0 60 103.923' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 17.32v34.64L30 69.28 0 51.96V17.32zM30 34.64l30 17.32v34.64L30 103.92 0 86.6V51.96z' fill='none' stroke='%2300F3FF' stroke-width='1'/%3E%3C/svg%3E");
+            background-size: 60px 103.923px;
+            animation: panHex 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes panHex {
+            0% { background-position: 0 0; }
+            100% { background-position: 60px 103.923px; }
+        }
+
+        /* Top Bar */
+        header {
+            position: relative;
+            z-index: 10;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.1);
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-family: var(--font-hud);
+            font-size: 24px;
+            color: var(--cyan);
+            letter-spacing: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+        }
+
+        .status {
+            font-family: var(--font-code);
+            font-size: 12px;
+            color: #00ff9c;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .status-dot {
+            width: 8px; height: 8px;
+            background: #00ff9c;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00ff9c;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-family: var(--font-hud);
+            font-size: 64px;
+            margin: 0 0 10px 0;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+        }
+
+        .hero p {
+            font-family: var(--font-code);
+            font-size: 16px;
+            color: #a0aab5;
+            max-width: 600px;
+            margin-bottom: 50px;
+            line-height: 1.6;
+        }
+
+        /* Radar Animation */
+        .radar-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin-bottom: 50px;
+        }
+
+        .radar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            background: radial-gradient(circle, rgba(0,243,255,0.05) 0%, rgba(0,0,0,0) 70%);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.1) inset;
+        }
+
+        .radar::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 50%; height: 50%;
+            background: linear-gradient(45deg, rgba(0, 243, 255, 0) 50%, rgba(0, 243, 255, 0.5) 100%);
+            transform-origin: 0% 0%;
+            animation: scan 4s linear infinite;
+        }
+
+        .radar-grid {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.2) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.2) 1px, transparent 1px);
+            background-size: 30px 30px;
+            border-radius: 50%;
+        }
+
+        @keyframes scan {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Portals */
+        .portals {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .portal-card {
+            background: rgba(10, 15, 20, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            width: 280px;
+            text-align: left;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .portal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .portal-admin { border-top: 3px solid var(--purple); }
+        .portal-admin:hover { border-color: var(--purple); box-shadow: 0 0 30px rgba(139, 92, 246, 0.2); }
+        
+        .portal-officer { border-top: 3px solid var(--cyan); }
+        .portal-officer:hover { border-color: var(--cyan); box-shadow: 0 0 30px rgba(0, 243, 255, 0.2); }
+
+        .portal-card h3 {
+            font-family: var(--font-hud);
+            color: #fff;
+            margin: 0 0 10px 0;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .portal-card p {
+            font-family: var(--font-code);
+            font-size: 13px;
+            color: #888;
+            margin: 0 0 20px 0;
+        }
+
+        .portal-card .btn {
+            font-family: var(--font-code);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 10px 15px;
+            border: 1px solid;
+            display: inline-block;
+            transition: 0.3s;
+        }
+
+        .portal-admin .btn { color: var(--purple); border-color: var(--purple); }
+        .portal-admin:hover .btn { background: var(--purple); color: #000; }
+
+        .portal-officer .btn { color: var(--cyan); border-color: var(--cyan); }
+        .portal-officer:hover .btn { background: var(--cyan); color: #000; }
+
+        /* Features */
+        .features {
+            position: relative;
+            z-index: 10;
+            padding: 60px 40px;
+            background: linear-gradient(180deg, transparent, rgba(0, 243, 255, 0.02));
+            border-top: 1px solid rgba(0, 243, 255, 0.1);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .feature-icon {
+            color: var(--cyan);
+            padding: 10px;
+            background: rgba(0, 243, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .feature-item h4 {
+            font-family: var(--font-ui);
+            font-size: 18px;
+            margin: 0 0 5px 0;
+            color: #fff;
+        }
+
+        .feature-item p {
+            font-family: var(--font-code);
+            font-size: 13px;
+            color: #888;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="hex-bg"></div>
+
+    <header>
+        <div class="logo">
+            <i data-lucide="eye"></i> TRINETRA
+        </div>
+        <div class="status">
+            <div class="status-dot"></div>
+            SYSTEM SECURE // IP CAPTURE ACTIVE
+        </div>
+    </header>
+
+    <div class="hero">
+        <div class="radar-container">
+            <div class="radar">
+                <div class="radar-grid"></div>
+            </div>
+        </div>
+        
+        <h1>Global Intelligence</h1>
+        <p>Advanced Cyber Forensics and Threat Detection Platform. Protected by Zero-Trust Architecture, Immutable Auditing, and Neural Link Integrations.</p>
+
+        <div class="portals">
+            <!-- Officer Portal -->
+            <a href="{% url 'portal_login' %}" class="portal-card portal-officer">
+                <h3><i data-lucide="shield"></i> Field Officer</h3>
+                <p>Access the investigation dashboard, upload evidence, and interface with the Neural Link AI for case analysis.</p>
+                <div class="btn">Initialize Session</div>
+            </a>
+
+            <!-- Admin Portal -->
+            <a href="{% url 'admin_login' %}" class="portal-card portal-admin">
+                <h3><i data-lucide="terminal"></i> Command Node</h3>
+                <p>System administrators only. Review global telemetry, immutable logs, and active threat profiles.</p>
+                <div class="btn">Elevated Access</div>
+            </a>
+        </div>
+    </div>
+
+    <div class="features">
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon"><i data-lucide="lock"></i></div>
+                <div>
+                    <h4>Zero-Trust Architecture</h4>
+                    <p>Continuous IP and User-Agent fingerprinting ensures sessions cannot be hijacked. Unauthorized access redirects to tarpits.</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon"><i data-lucide="cpu"></i></div>
+                <div>
+                    <h4>Neural Link AI</h4>
+                    <p>Powered by Gemini 2.5 Flash, the AI Lab drafts legal documents, analyzes logs, and processes forensic evidence instantly.</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon"><i data-lucide="database"></i></div>
+                <div>
+                    <h4>Immutable Logs</h4>
+                    <p>Every query, file upload, and interaction is permanently hashed into the DB to ensure chain of custody for court proceedings.</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon"><i data-lucide="fingerprint"></i></div>
+                <div>
+                    <h4>Steganography</h4>
+                    <p>Generated PDF files contain invisible cryptographic watermarks linking the document directly to the generating officer's ID.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

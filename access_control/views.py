@@ -16,12 +16,9 @@ def root_routing_view(request):
     """
     client_ip = get_client_ip(request)
     
-    if getattr(settings, 'DEBUG', False) or \
-       not getattr(settings, 'TRINETRA_STRICT_FIREWALL', False) or \
-       AllowedStation.objects.filter(static_ip=client_ip, is_active=True).exists():
-        return redirect('portal_login') 
-    else:
-        return redirect('trap_login')
+    # The middleware allows '/' through without checking IPs so the public can see the landing page.
+    # The actual IP blocking happens when they try to access /admin/ or /portal/ endpoints.
+    return render(request, 'landing.html')
 
 def honeypot_tarpit(request):
     """
