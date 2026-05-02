@@ -48,11 +48,17 @@ class IPFortressMiddleware:
                 timestamp=timezone.now()
             )
 
-            # For unauthenticated or unauthorized IPs, render the login page with IP_BLOCKED=True
-            return render(request, 'officer_portal/login.html', {
-                'IP_BLOCKED': True,
-                'client_ip': client_ip
-            }, status=403)
+            # For unauthenticated or unauthorized IPs, render the appropriate login page with IP_BLOCKED=True
+            if request.path.startswith('/admin/'):
+                return render(request, 'admin/login.html', {
+                    'IP_BLOCKED': True,
+                    'client_ip': client_ip
+                }, status=403)
+            else:
+                return render(request, 'officer_portal/login.html', {
+                    'IP_BLOCKED': True,
+                    'client_ip': client_ip
+                }, status=403)
             
         except Exception as e:
             logger.error(f"IPFortressMiddleware DB error: {e}")

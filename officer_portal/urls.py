@@ -14,7 +14,6 @@ urlpatterns = [
     path('api/create-case/', views.create_case_endpoint, name='create_case'),
     path('api/chat/status/<str:task_id>/', views.ai_task_status, name='ai_task_status'),
     path('api/chat/delete/<int:chat_id>/', views.delete_chat_endpoint, name='delete_chat_endpoint'),
-    path('sys/factory_reset/', views.factory_reset, name='factory_reset'),
     path('cases/', views.cases_view, name='cases'),
     path('evidence/', views.evidence_view, name='evidence'),
     path('audit-logs/', views.audit_logs_view, name='audit_logs'),

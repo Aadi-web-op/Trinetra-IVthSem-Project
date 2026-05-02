@@ -193,6 +193,13 @@
 
         <div class="box-title">Admin Command</div>
 
+        {% if IP_BLOCKED %}
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h1 style="color: var(--neon-red); font-family: var(--font-hud); font-size: 28px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px;">ACCESS DENIED</h1>
+            <div style="color: var(--neon-red); font-family: var(--font-code); font-size: 14px; letter-spacing: 1px;">IP [{{ client_ip|default:"UNKNOWN" }}] NOT AUTHORIZED</div>
+        </div>
+        {% else %}
+        
         {% if form.errors and not form.non_field_errors %}
         <p class="errornote">
             Please correct the errors below.
@@ -225,6 +232,7 @@
                 <input type="submit" value="Initiate Session">
             </div>
         </form>
+        {% endif %}
     </div>
 </body>
 

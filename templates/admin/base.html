@@ -264,32 +264,76 @@
                 <span class="sidebar-label">System Overview</span>
             </a>
             
-            <div class="sidebar-group-title">Authentication</div>
+            <div class="sidebar-group-title">Identity & Access</div>
             <a href="/admin/auth/user/" class="sidebar-item">
                 <i data-lucide="users" class="sidebar-icon"></i>
                 <span class="sidebar-label">Global Users</span>
             </a>
-            <a href="/admin/officer_portal/" class="sidebar-item">
+            <a href="/admin/auth/group/" class="sidebar-item">
                 <i data-lucide="shield-check" class="sidebar-icon"></i>
-                <span class="sidebar-label">Clearance Levels</span>
+                <span class="sidebar-label">Permission Groups</span>
             </a>
-            <a href="/admin/access_control/" class="sidebar-item">
+            <a href="/admin/authentication/officerprofile/" class="sidebar-item">
+                <i data-lucide="id-card" class="sidebar-icon"></i>
+                <span class="sidebar-label">Officer Profiles</span>
+            </a>
+            <a href="/admin/access_control/allowedstation/" class="sidebar-item">
                 <i data-lucide="key" class="sidebar-icon"></i>
                 <span class="sidebar-label">Firewall Rules</span>
             </a>
+            <a href="/admin/access_control/bannedip/" class="sidebar-item">
+                <i data-lucide="ban" class="sidebar-icon"></i>
+                <span class="sidebar-label">Banned IPs</span>
+            </a>
 
-            <div class="sidebar-group-title">Operations</div>
+            <div class="sidebar-group-title">Case Operations</div>
             <a href="/admin/officer_portal/case/" class="sidebar-item">
                 <i data-lucide="briefcase" class="sidebar-icon"></i>
                 <span class="sidebar-label">Case Archives</span>
             </a>
-            <a href="/admin/audit_logs/" class="sidebar-item">
+            <a href="/admin/officer_portal/evidence/" class="sidebar-item">
+                <i data-lucide="hard-drive" class="sidebar-icon"></i>
+                <span class="sidebar-label">Evidence Vault</span>
+            </a>
+            <a href="/admin/officer_portal/legaldraft/" class="sidebar-item">
+                <i data-lucide="file-text" class="sidebar-icon"></i>
+                <span class="sidebar-label">Legal Drafts</span>
+            </a>
+
+            <div class="sidebar-group-title">Intelligence</div>
+            <a href="/admin/officer_portal/chatmessage/" class="sidebar-item">
+                <i data-lucide="message-square" class="sidebar-icon"></i>
+                <span class="sidebar-label">Chat Logs</span>
+            </a>
+            <a href="/admin/officer_portal/aitask/" class="sidebar-item">
+                <i data-lucide="cpu" class="sidebar-icon"></i>
+                <span class="sidebar-label">AI Tasks</span>
+            </a>
+            <a href="/admin/officer_portal/aiusagelog/" class="sidebar-item">
+                <i data-lucide="scroll-text" class="sidebar-icon"></i>
+                <span class="sidebar-label">AI Usage Logs</span>
+            </a>
+
+            <div class="sidebar-group-title">Telemetry</div>
+            <a href="/admin/audit_logs/immutablelog/" class="sidebar-item">
                 <i data-lucide="activity" class="sidebar-icon"></i>
-                <span class="sidebar-label">System Telemetry</span>
+                <span class="sidebar-label">Immutable Logs</span>
+            </a>
+            <a href="/admin/admin/logentry/" class="sidebar-item">
+                <i data-lucide="list" class="sidebar-icon"></i>
+                <span class="sidebar-label">Action History</span>
+            </a>
+            <a href="/admin/access_control/traplog/" class="sidebar-item">
+                <i data-lucide="radar" class="sidebar-icon"></i>
+                <span class="sidebar-label">Honeypot Traps</span>
             </a>
         </div>
         
-        <div class="p-4 border-t border-white/5 shrink-0">
+        <div class="p-4 border-t border-white/5 shrink-0 space-y-1">
+            <a href="{% url 'officer_dashboard' %}" class="sidebar-item text-cyan hover:text-white hover:bg-cyan/10">
+                <i data-lucide="external-link" class="sidebar-icon"></i>
+                <span class="sidebar-label">Officer Portal</span>
+            </a>
             <form id="logout-form" method="post" action="{% url 'admin:logout' %}">
                 {% csrf_token %}
                 <button type="submit" class="sidebar-item w-full bg-transparent border-none text-red hover:text-red hover:bg-red/10 cursor-pointer p-0">

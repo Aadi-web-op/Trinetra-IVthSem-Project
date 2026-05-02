@@ -59,11 +59,12 @@ def officer_login(request):
         user = authenticate(request, username=username, password=password)
         
         if user is not None:
-            if user.is_staff:
+            if user.is_staff or user.is_superuser:
                 login(request, user)
                 # Zero-Trust Session Fingerprinting
                 request.session['zt_ip'] = get_client_ip(request)
                 request.session['zt_ua'] = request.META.get('HTTP_USER_AGENT', 'Unknown')
+                request.session['user_role'] = 'officer'
                 return redirect('officer_dashboard')
             else:
                 messages.error(request, "Access Denied: Officer Clearance Required.")
@@ -77,11 +78,17 @@ class AdminLoginOverrideView(LoginView):
     template_name = 'admin/login.html'
     redirect_authenticated_user = True
     
+    def form_valid(self, form):
+        user = form.get_user()
+        # Fingerprint the admin session
+        response = super().form_valid(form)
+        self.request.session['zt_ip'] = get_client_ip(self.request)
+        self.request.session['zt_ua'] = self.request.META.get('HTTP_USER_AGENT', 'Unknown')
+        self.request.session['user_role'] = 'admin'
+        return response
+    
     def get_success_url(self):
-        user = self.request.user
-        if user.is_superuser:
-            return '/portal/admin-security/2fa/' # Explicit URL
-        return '/admin/'
+        return '/portal/admin-security/2fa/'
 
 # [FIX] 2FA View with Template Check
 class Admin2FAView(LoginRequiredMixin, TemplateView):
@@ -465,43 +472,7 @@ def system_lockdown(request):
     """
     return render(request, 'officer_portal/system_lockdown.html')
 
-from django.http import HttpResponse
-def factory_reset(request):
-    """Temporary endpoint to wipe the DB and recreate admin from Azure."""
-    if request.GET.get('key') != 'RESET123':
-        return HttpResponse("Unauthorized", status=403)
-        
-    try:
-        from officer_portal.models import Case, ChatMessage, Evidence, LegalDraft, AIUsageLog
-        from django.contrib.auth import get_user_model
-        User = get_user_model()
-        
-        # 1. Delete App Data
-        Evidence.objects.all().delete()
-        ChatMessage.objects.all().delete()
-        LegalDraft.objects.all().delete()
-        AIUsageLog.objects.all().delete()
-        Case.objects.all().delete()
-        
-        # 2. Delete Non-Admin Users
-        User.objects.exclude(username='admin').delete()
-        
-        # 3. Create Admin
-        if not User.objects.filter(username='admin').exists():
-            User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
-            msg = "DB wiped and Admin created successfully (admin / admin123)."
-        else:
-            admin_user = User.objects.get(username='admin')
-            admin_user.set_password('admin123')
-            admin_user.is_superuser = True
-            admin_user.is_staff = True
-            admin_user.save()
-            msg = "DB wiped and existing Admin password reset to admin123."
-            
-        return HttpResponse(f"<h1>Success!</h1><p>{msg}</p><p><b>Security Warning:</b> Please ask the AI to remove this endpoint now!</p>")
-        
-    except Exception as e:
-        return HttpResponse(f"<h1>Error</h1><p>{str(e)}</p>", status=500)
+# [REMOVED] factory_reset endpoint — security risk for production deployment
 
 @login_required
 def cases_view(request):

@@ -51,16 +51,15 @@ def health_check(request):
         http_status = 503
         logger.error(f"Health check: DB connection failed — {e}")
 
-    # --- Check 2: AI Service Config ---
+    # --- Check 2: AI Service Config (Gemini Neural Link) ---
     import os
-    hf_token = os.getenv('HF_API_TOKEN')
-    ai_node = os.getenv('TRINETRA_AI_NODE', '')
+    neural_key = os.getenv('PORTAL_NEURAL_LINK_KEY')
     status['checks']['ai_service'] = {
-        'status': 'ok' if hf_token else 'misconfigured',
-        'node_configured': bool(ai_node),
-        'token_present': bool(hf_token),
+        'status': 'ok' if neural_key else 'misconfigured',
+        'engine': 'gemini-2.5-flash',
+        'key_present': bool(neural_key),
     }
-    if not hf_token:
+    if not neural_key:
         status['status'] = 'degraded'
 
     return JsonResponse(status, status=http_status)

@@ -140,26 +140,39 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 # Force trust for Azure's SSL handling
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# Allow all Azure domains
-ALLOWED_HOSTS = ['*']
+# Allowed Hosts — override via ALLOWED_HOSTS env var (comma-separated)
+_extra_hosts = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '').split(',') if h.strip()]
+ALLOWED_HOSTS = [
+    'localhost', '127.0.0.1', '0.0.0.0',
+    '.vercel.app',
+    '.azurewebsites.net',
+    '.railway.app',
+] + _extra_hosts
 
-# [CRITICAL] Trust Azure for Login Forms (Fixes the Loop)
+# [CRITICAL] Trust deployment platforms for CSRF
 CSRF_TRUSTED_ORIGINS = [
     'https://*.vercel.app',
     'https://*.azurewebsites.net',
-    'https://trinetra.azurewebsites.net',
+    'https://*.railway.app',
     'http://localhost:8000',
-    'http://127.0.0.1:8000'
+    'http://127.0.0.1:8000',
 ]
 
 # Production Toggles
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
+TRINETRA_STRICT_FIREWALL = os.environ.get('STRICT_FIREWALL', 'True').lower() == 'true'
 
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    X_FRAME_OPTIONS = 'SAMEORIGIN'
+    CSRF_COOKIE_HTTPONLY = True
+    X_FRAME_OPTIONS = 'DENY'
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_HSTS_SECONDS = 31536000       # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
 else:
     SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = False

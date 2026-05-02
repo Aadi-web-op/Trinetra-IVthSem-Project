@@ -4,6 +4,11 @@ from django.views.generic import RedirectView
 from access_control.views import trap_login, root_routing_view, honeypot_tarpit
 from officer_portal.views import AdminLoginOverrideView
 from config.health import health_check
+from config.admin_site import trinetra_admin
+
+# Auto-discover admin registrations from all apps, register on our custom site
+admin.site = trinetra_admin
+admin.autodiscover()
 
 urlpatterns = [
     # Health Check (Azure probes + monitoring)
@@ -15,7 +20,7 @@ urlpatterns = [
     # HIJACK: Force Admin Login to use our clean custom view
     path('admin/login/', AdminLoginOverrideView.as_view(), name='admin_login'),
 
-    path('admin/', admin.site.urls),
+    path('admin/', trinetra_admin.urls),
     path('portal/', include('officer_portal.urls')),
     path('auth/', include('authentication.urls')),
     path('accounts/login/', trap_login, name='trap_login'),
@@ -26,3 +31,4 @@ urlpatterns = [
     path('wp-admin/', honeypot_tarpit),
     path('.env', honeypot_tarpit),
 ]
+
