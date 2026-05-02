@@ -29,7 +29,7 @@ def run_setup():
             
         # 3. Ensure Localhost and User IP is an AllowedStation
         from access_control.models import AllowedStation
-        local_ips = ['127.0.0.1', 'localhost', '157.49.177.40']
+        local_ips = ['127.0.0.1', '157.49.177.40']
         for ip in local_ips:
             if not AllowedStation.objects.filter(static_ip=ip).exists():
                 print(f"Adding {ip} to AllowedStation...")
