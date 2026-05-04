@@ -5,6 +5,10 @@ class AllowedStation(models.Model):
     static_ip = models.GenericIPAddressField(unique=True)
     is_active = models.BooleanField(default=True)
 
+    class Meta:
+        verbose_name = "Whitelisted IP"
+        verbose_name_plural = "Whitelisted IPs"
+
     def __str__(self):
         return f"{self.station_name} ({self.static_ip})"
 

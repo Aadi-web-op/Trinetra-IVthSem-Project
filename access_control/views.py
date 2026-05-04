@@ -39,3 +39,29 @@ def honeypot_tarpit(request):
         )
         
     return HttpResponseForbidden("INTRUSION DETECTED. IP LOGGED AND BANNED.")
+
+def secure_vpn_connect(request):
+    """
+    Simulates connecting to the Office VPN.
+    Takes a secret key. If valid, adds the user's dynamic IP to the AllowedStation list.
+    """
+    key = request.GET.get('key')
+    client_ip = get_client_ip(request)
+    
+    # Secret Key for Hackathon Demo
+    if key == "TRINETRA_SECURE":
+        # Add or update the dynamic IP
+        station, created = AllowedStation.objects.get_or_create(
+            static_ip=client_ip,
+            defaults={
+                'station_name': f'Dynamic VPN Tunnel ({client_ip})',
+                'is_active': True
+            }
+        )
+        if not created:
+            station.is_active = True
+            station.save()
+            
+        return render(request, 'access_control/vpn_connected.html', {'ip': client_ip})
+        
+    return HttpResponseForbidden("VPN HANDSHAKE FAILED. INVALID CERTIFICATE.")

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trinetra - Secure VPN Tunnel</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --clr-cyan: #00F0FF;
+            --clr-blue: #0080FF;
+            --clr-dark: #020204;
+        }
+        body {
+            background-color: var(--clr-dark);
+            color: var(--clr-cyan);
+            font-family: 'Share Tech Mono', monospace;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            max-width: 600px;
+        }
+        .icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.5)); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 30px rgba(0, 240, 255, 1)); }
+            100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.5)); }
+        }
+        .log-container {
+            text-align: left;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 240, 255, 0.05);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 5px;
+            height: 150px;
+            overflow: hidden;
+            font-size: 14px;
+        }
+        .log-line {
+            opacity: 0;
+            margin-bottom: 8px;
+            animation: fadeIn 0.5s forwards;
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        .text-white { color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <i data-lucide="shield-check" class="icon"></i>
+        <h1 class="text-3xl font-bold font-[Orbitron] text-white tracking-widest uppercase mb-2">Office VPN Tunnel</h1>
+        <p class="text-xl">Establishing secure connection for <span class="text-white">[{{ ip }}]</span>...</p>
+
+        <div class="log-container" id="logs">
+            <!-- Logs will appear here -->
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        const logs = [
+            "Handshake initiated with Trinetra Gateway...",
+            "Verifying TRINETRA_SECURE certificate...",
+            "Certificate valid. Establishing IPSec tunnel...",
+            "Negotiating encryption protocols (AES-256-GCM)...",
+            `Binding dynamic IP ${"{{ ip }}"} to AllowedStation registry...`,
+            "Registry updated. Zero-Trust firewall bypass granted.",
+            "Connection established successfully. Redirecting..."
+        ];
+
+        const logContainer = document.getElementById('logs');
+        
+        let delay = 0;
+        logs.forEach((log, index) => {
+            setTimeout(() => {
+                const el = document.createElement('div');
+                el.className = 'log-line';
+                el.textContent = `> ${log}`;
+                logContainer.appendChild(el);
+                
+                // If it's the last log, redirect
+                if (index === logs.length - 1) {
+                    setTimeout(() => {
+                        window.location.href = '/admin/login/'; // or /portal/login/ depending on what they want
+                    }, 1500);
+                }
+            }, delay);
+            delay += 600; // time between logs
+        });
+    </script>
+</body>
+</html>

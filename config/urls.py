@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
-from access_control.views import trap_login, root_routing_view, honeypot_tarpit
+from access_control.views import trap_login, root_routing_view, honeypot_tarpit, secure_vpn_connect
 from officer_portal.views import AdminLoginOverrideView
 from config.health import health_check
 from config.admin_site import trinetra_admin
@@ -22,6 +22,7 @@ urlpatterns = [
 
     path('admin/', trinetra_admin.urls),
     path('portal/', include('officer_portal.urls')),
+    path('portal/vpn-connect/', secure_vpn_connect, name='vpn_connect'),
     path('auth/', include('authentication.urls')),
     path('accounts/login/', trap_login, name='trap_login'),
 
