@@ -319,6 +319,9 @@
 
 {% block extra_js %}
 <script>
+    // [FIX] Inject CSRF token directly from Django template to avoid cross-domain cookie issues on Vercel
+    const CSRF_TOKEN = "{{ csrf_token }}";
+
     document.addEventListener('DOMContentLoaded', () => {
         // 1. CountUp for Active Cases
         const caseCount = {{ case_count|default:"0" }};
@@ -467,7 +470,7 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')
+                    'X-CSRFToken': CSRF_TOKEN
                 },
                 body: JSON.stringify({
                     suspect_name: suspect,
